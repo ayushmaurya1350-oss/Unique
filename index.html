@@ -692,7 +692,7 @@ th{border-bottom-color:var(--butter)}
     <!-- ATTENDANCE -->
     <div id="att" class="pg">
       <div class="tbar"><div><div class="ptit">Attendance Tracker</div><div class="psub">Mark daily attendance per class &amp; subject</div></div><button class="btn btnp" onclick="doSaveAttBtn()">Save Record</button></div>
-      <div class="card" style="margin-bottom:14px"><div class="fr" style="margin:0"><div class="fg-in" style="max-width:165px"><div class="frl">Date</div><input type="date" id="ad" onchange="rAtt()"></div><div class="fg-in" style="max-width:125px"><div class="frl">Class</div><select id="ac" onchange="rAtt()"><option>Class 8</option><option>Class 9</option><option>Class 10</option></select></div><div class="fg-in" style="max-width:135px"><div class="frl">Subject</div><select id="asj" onchange="rAtt()"><option>English</option><option>Maths</option><option>Science</option><option>Hindi</option><option>History</option></select></div></div></div>
+      <div class="card" style="margin-bottom:14px"><div class="fr" style="margin:0"><div class="fg-in" style="max-width:165px"><div class="frl">Date</div><input type="date" id="ad" onchange="rAtt()"></div><div class="fg-in" style="max-width:125px"><div class="frl">Class</div><select id="ac" onchange="rAtt()"><option>Class 8</option><option>Class 9</option><option>Class 10</option></select></div><div class="fg-in" style="max-width:135px"><div class="frl">Subject</div><select id="asj" onchange="rAtt()"><option>English</option><option>Maths</option><option>Science</option><option>Hindi</option><option>History</option></select></div><div class="fg-in"><div class="frl">Search</div><input type="text" id="aq" placeholder="Search by name..." oninput="rAtt()"></div></div></div>
       <div id="asum" class="card" style="display:none;padding:12px 22px;margin-bottom:12px"><div style="display:flex;gap:24px;font-size:12px;font-weight:700"><span id="ap" style="color:#15803d"></span><span id="aa" style="color:#b91c1c"></span><span id="al" style="color:#b45309"></span></div></div>
       <div class="card"><table id="atbl"></table></div>
     </div>
@@ -700,12 +700,12 @@ th{border-bottom-color:var(--butter)}
     <div id="fee" class="pg">
       <div class="tbar"><div><div class="ptit">Fee Management</div><div class="psub">Class 8: Rs.1,250 &bull; Class 9: Rs.1,500 &bull; Class 10: Rs.1,750 per month</div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btnp" onclick="openM('fm')">Record Payment</button><button class="btn" style="border-color:var(--or);color:var(--or)" onclick="openM('cfm')">Set Custom Fee</button></div></div>
       <div id="fmet" class="mg"></div>
-      <div class="card"><div class="chdr"><span class="ctit">Fee Records</span><div style="display:flex;gap:8px"><select id="fmf" style="width:140px;padding:6px 10px;font-size:11px;font-family:inherit;font-weight:700" onchange="rFees()"><option value="">All Months</option><option>December 2026</option><option>November 2026</option><option>October 2026</option><option>September 2026</option><option>August 2026</option><option>July 2026</option><option>June 2026</option><option>May 2026</option><option>April 2026</option><option>March 2026</option><option>February 2026</option><option>January 2026</option><option>December 2025</option><option>November 2025</option><option>October 2025</option><option>September 2025</option><option>August 2025</option><option>July 2025</option><option>June 2025</option></select><select id="fsf" style="width:110px;padding:6px 10px;font-size:11px;font-family:inherit;font-weight:700" onchange="rFees()"><option value="">All Status</option><option value="Paid">Paid</option><option value="Due">Due</option><option value="Overdue">Overdue</option></select></div></div><div style="overflow-x:auto"><table id="ftbl"></table></div></div>
+      <div class="card"><div class="chdr"><span class="ctit">Fee Records</span><div style="display:flex;gap:8px;flex-wrap:wrap"><input type="text" id="fq" placeholder="Search by name..." style="width:150px;padding:6px 10px;font-size:11px;font-family:inherit;font-weight:700" oninput="_rFeesD()"><select id="fcl" style="width:110px;padding:6px 10px;font-size:11px;font-family:inherit;font-weight:700" onchange="_feeLimit=150;rFees()"><option value="">All Classes</option><option>Class 8</option><option>Class 9</option><option>Class 10</option></select><select id="fmf" style="width:140px;padding:6px 10px;font-size:11px;font-family:inherit;font-weight:700" onchange="rFees()"><option value="">All Months</option><option>December 2026</option><option>November 2026</option><option>October 2026</option><option>September 2026</option><option>August 2026</option><option>July 2026</option><option>June 2026</option><option>May 2026</option><option>April 2026</option><option>March 2026</option><option>February 2026</option><option>January 2026</option><option>December 2025</option><option>November 2025</option><option>October 2025</option><option>September 2025</option><option>August 2025</option><option>July 2025</option><option>June 2025</option></select><select id="fsf" style="width:110px;padding:6px 10px;font-size:11px;font-family:inherit;font-weight:700" onchange="rFees()"><option value="">All Status</option><option value="Paid">Paid</option><option value="Due">Due</option><option value="Overdue">Overdue</option></select></div></div><div style="overflow-x:auto"><table id="ftbl"></table></div></div>
     </div>
     <!-- RESULTS -->
     <div id="res" class="pg">
       <div class="tbar"><div><div class="ptit">Results &amp; Marks</div><div class="psub">Student performance tracker</div></div><button class="btn btnp" onclick="openM('mm')">+ Add Marks</button></div>
-      <div class="card" style="margin-bottom:14px"><div class="fr" style="margin:0"><div class="fg-in"><div class="frl">Exam</div><select id="re" onchange="rRes()"><option>Unit Test 1 - July 2025</option><option>Mid-Term - September 2025</option><option>Unit Test 2 - November 2025</option><option>Final Exam - December 2025</option><option>Unit Test 1 - February 2026</option><option>Mid-Term - March 2026</option></select></div><div class="fg-in" style="max-width:130px"><div class="frl">Class</div><select id="rc" onchange="rRes()"><option value="">All</option><option>Class 8</option><option>Class 9</option><option>Class 10</option></select></div></div></div>
+      <div class="card" style="margin-bottom:14px"><div class="fr" style="margin:0"><div class="fg-in"><div class="frl">Exam</div><select id="re" onchange="rRes()"><option>Unit Test 1 - July 2025</option><option>Mid-Term - September 2025</option><option>Unit Test 2 - November 2025</option><option>Final Exam - December 2025</option><option>Unit Test 1 - February 2026</option><option>Mid-Term - March 2026</option></select></div><div class="fg-in" style="max-width:130px"><div class="frl">Class</div><select id="rc" onchange="rRes()"><option value="">All</option><option>Class 8</option><option>Class 9</option><option>Class 10</option></select></div><div class="fg-in"><div class="frl">Search</div><input type="text" id="rq" placeholder="Search by name..." oninput="_rResD()"></div></div></div>
       <div class="card"><div style="overflow-x:auto"><table id="rtbl"></table></div></div>
     </div>
     <!-- TIMETABLE -->
@@ -909,7 +909,7 @@ th{border-bottom-color:var(--butter)}
 <div id="fm" class="ov"><div class="modal">
   <button class="xbtn" onclick="closeM('fm')">&#10005;</button>
   <div class="mtit">Record Fee Payment</div>
-  <div class="fr"><div class="fg-in"><div class="frl">Student</div><select id="fstu" onchange="updFee()"></select></div></div>
+  <div class="fr"><div class="fg-in"><div class="frl">Student</div><div style="display:flex;gap:8px;margin-bottom:6px"><input type="text" id="fstu-q" placeholder="Search name..." oninput="popFeeM(true)"><select id="fstu-c" style="max-width:118px" onchange="popFeeM(true)"><option value="">All Classes</option><option>Class 8</option><option>Class 9</option><option>Class 10</option></select></div><select id="fstu" onchange="updFee()"></select></div></div>
   <div class="fr"><div class="fg-in"><div class="frl">Month</div><select id="fmo" onchange="updFee()"><option>December 2026</option><option>November 2026</option><option>October 2026</option><option>September 2026</option><option>August 2026</option><option>July 2026</option><option>June 2026</option><option>May 2026</option><option>April 2026</option><option>March 2026</option><option>February 2026</option><option>January 2026</option><option>December 2025</option><option>November 2025</option><option>October 2025</option><option>September 2025</option><option>August 2025</option><option>July 2025</option><option>June 2025</option></select></div><div class="fg-in"><div class="frl">Mode</div><select id="fmd"><option>Cash</option><option>UPI</option><option>NEFT</option><option>Cheque</option></select></div></div>
   <div id="fdtl" style="margin-bottom:12px;border:1.5px solid #f1f5f9;border-radius:var(--r12);padding:12px 14px;background:#f8fafc"></div>
   <div id="ftot" style="font-size:15px;font-weight:800;color:var(--nv);margin-bottom:16px;text-align:right"></div>
@@ -926,7 +926,8 @@ th{border-bottom-color:var(--butter)}
 <div id="mm" class="ov"><div class="modal">
   <button class="xbtn" onclick="closeM('mm')">&#10005;</button>
   <div class="mtit">Add / Update Marks</div>
-  <div class="fr"><div class="fg-in"><div class="frl">Student</div><select id="mstu" onchange="mkIn()"></select></div><div class="fg-in"><div class="frl">Exam</div><select id="mex" onchange="mkIn()"><option>Unit Test 1 - July 2025</option><option>Mid-Term - September 2025</option><option>Unit Test 2 - November 2025</option><option>Final Exam - December 2025</option><option>Unit Test 1 - February 2026</option><option>Mid-Term - March 2026</option></select></div></div>
+  <div class="fr"><div class="fg-in"><div class="frl">Student</div><div style="display:flex;gap:8px;margin-bottom:6px"><input type="text" id="mstu-q" placeholder="Search name..." oninput="popMarksM(true)"><select id="mstu-c" style="max-width:118px" onchange="popMarksM(true)"><option value="">All Classes</option><option>Class 8</option><option>Class 9</option><option>Class 10</option></select></div><select id="mstu" onchange="mkIn()"></select></div></div>
+  <div class="fr"><div class="fg-in"><div class="frl">Exam</div><select id="mex" onchange="mkIn()"><option>Unit Test 1 - July 2025</option><option>Mid-Term - September 2025</option><option>Unit Test 2 - November 2025</option><option>Final Exam - December 2025</option><option>Unit Test 1 - February 2026</option><option>Mid-Term - March 2026</option></select></div></div>
   <div id="min" style="margin-bottom:14px"></div>
   <button class="btn btnp" style="width:100%;padding:12px" onclick="doMarks()">Save Marks</button>
 </div></div>
@@ -1004,7 +1005,7 @@ th{border-bottom-color:var(--butter)}
   <div style="font-size:12px;color:#64748b;background:#fff7ed;border:1px solid #fed7aa;border-radius:var(--r8);padding:10px 14px;margin-bottom:18px;line-height:1.7;border-left:3px solid var(--or)">
     Use this to override the standard fee for a specific student &amp; month — e.g. discount, scholarship, late payment penalty.
   </div>
-  <div class="fr"><div class="fg-in"><div class="frl">Student</div><select id="cf-stu" onchange="updCustomFee()"></select></div></div>
+  <div class="fr"><div class="fg-in"><div class="frl">Student</div><div style="display:flex;gap:8px;margin-bottom:6px"><input type="text" id="cf-stu-q" placeholder="Search name..." oninput="populateCustomFeeModal(true)"><select id="cf-stu-c" style="max-width:118px" onchange="populateCustomFeeModal(true)"><option value="">All Classes</option><option>Class 8</option><option>Class 9</option><option>Class 10</option></select></div><select id="cf-stu" onchange="updCustomFee()"></select></div></div>
   <div class="fr"><div class="fg-in"><div class="frl">Month</div><select id="cf-month"><option>December 2026</option><option>November 2026</option><option>October 2026</option><option>September 2026</option><option>August 2026</option><option>July 2026</option><option>June 2026</option><option>May 2026</option><option>April 2026</option><option>March 2026</option><option>February 2026</option><option>January 2026</option><option>December 2025</option><option>November 2025</option><option>October 2025</option><option>September 2025</option><option>August 2025</option><option>July 2025</option><option>June 2025</option></select></div></div>
   <div class="fr">
     <div class="fg-in">
@@ -1947,8 +1948,8 @@ function doEnroll(){
 // ── MANAGE TEACHERS ──────────────────────────────────────────────────────────
 
 // CUSTOM FEE
-function populateCustomFeeModal(){
-  document.getElementById('cf-stu').innerHTML=students.map(function(s){return'<option value="'+s.id+'">'+s.name+' ('+s.cls+')</option>';}).join('');
+function populateCustomFeeModal(keep){
+  fillStuSel('cf-stu',keep);
   updCustomFee();
 }
 function updCustomFee(){
@@ -1993,7 +1994,10 @@ function rAtt(){
   var cls=document.getElementById('ac').value,subj=document.getElementById('asj').value,date=document.getElementById('ad').value;
   var sl=students.filter(function(s){return s.cls===cls&&s.subjects.indexOf(subj)!==-1;});
   if(!sl.length){document.getElementById('atbl').innerHTML='<tr><td style="text-align:center;color:#94a3b8;padding:28px">No students for '+subj+' in '+cls+'</td></tr>';document.getElementById('asum').style.display='none';return;}
-  var rows=sl.map(function(s,i){
+  var _aq=(document.getElementById('aq').value||'').toLowerCase().trim();
+  var vl=_aq?sl.filter(function(s){return s.name.toLowerCase().indexOf(_aq)!==-1;}):sl;
+  if(!vl.length){document.getElementById('atbl').innerHTML='<tr><td style="text-align:center;color:#94a3b8;padding:28px">No student matches "'+_aq.replace(/</g,'&lt;')+'"</td></tr>';updSum(cls,subj,date,sl);return;}
+  var rows=vl.map(function(s,i){
     var rec=attOf(s.id).find(function(a){return a.date===date&&a.subject===subj&&a.cls===cls;});var cur=rec?rec.status:'Present';
     return '<tr><td style="color:#cbd5e1;font-weight:700">'+('0'+(i+1)).slice(-2)+'</td><td>'+ncell(s)+'</td><td>'+
       '<button class="abtn'+(cur==='Present'?' present':'')+'" onclick="setAtt('+s.id+',\'Present\',\''+date+'\',\''+cls+'\',\''+subj+'\',this)">Present</button>'+
@@ -2692,10 +2696,17 @@ function rFeeM(){
     mc('Collection Rate',pct+'%','Overall','mc-bl');
 }
 var _feeLimit=150;
+var _rFeesD=_deb(function(){_feeLimit=150;rFees();},180);
+var _rResD=_deb(function(){_resLimit=150;rRes();},180);
 function rFees(){
   var mf=document.getElementById('fmf').value,sf=document.getElementById('fsf').value;
-  var list=fees.filter(function(f){return(!mf||f.month===mf)&&(!sf||f.status===sf);});
-  var _sm=stuMap(),_fmore=list.length>_feeLimit?list.length-_feeLimit:0;
+  var fq=(document.getElementById('fq').value||'').toLowerCase().trim(),fcl=document.getElementById('fcl').value;
+  var _sm=stuMap();
+  var list=fees.filter(function(f){
+    if(mf&&f.month!==mf)return false;if(sf&&f.status!==sf)return false;
+    if(fq||fcl){var st=_sm[f.stuId];if(!st)return false;if(fcl&&st.cls!==fcl)return false;if(fq&&st.name.toLowerCase().indexOf(fq)===-1)return false;}
+    return true;});
+  var _fmore=list.length>_feeLimit?list.length-_feeLimit:0;
   var rows=list.slice(0,_feeLimit).map(function(f){
     var s=_sm[f.stuId];if(!s)return'';
     var effAmt=f.customFee||f.amount;
@@ -2706,8 +2717,18 @@ function rFees(){
   document.getElementById('ftbl').innerHTML=thead(['Student','Class','Month','Amount','Mode','Date','Status',''])+
     '<tbody>'+(rows||'<tr><td colspan="8" style="text-align:center;color:#94a3b8;padding:28px">No records</td></tr>')+'</tbody>';
 }
-function popFeeM(){
-  document.getElementById('fstu').innerHTML=students.map(function(s){return'<option value="'+s.id+'">'+s.name+' ('+s.cls+')</option>';}).join('');
+
+// Shared student picker for modals: filters the <select> by name search + class
+function fillStuSel(sel,keep){
+  var qe=document.getElementById(sel+'-q'),ce=document.getElementById(sel+'-c'),se=document.getElementById(sel);
+  if(!keep){qe.value='';ce.value='';}
+  var q=qe.value.toLowerCase().trim(),c=ce.value,prev=se.value;
+  var list=students.filter(function(s){return(!c||s.cls===c)&&(!q||s.name.toLowerCase().indexOf(q)!==-1);});
+  se.innerHTML=list.length?list.map(function(s){return'<option value="'+s.id+'">'+s.name+' ('+s.cls+')</option>';}).join(''):'<option value="">No students found</option>';
+  if(keep&&prev&&list.some(function(s){return String(s.id)===prev;}))se.value=prev;
+}
+function popFeeM(keep){
+  fillStuSel('fstu',keep);
   updFee();
 }
 function updFee(){
@@ -2754,8 +2775,8 @@ function showRct(fid){
 }
 
 // RESULTS
-function popMarksM(){
-  document.getElementById('mstu').innerHTML=students.map(function(s){return'<option value="'+s.id+'">'+s.name+' ('+s.cls+')</option>';}).join('');mkIn();
+function popMarksM(keep){
+  fillStuSel('mstu',keep);mkIn();
 }
 function mkIn(){
   var id=parseInt(document.getElementById('mstu').value),exam=document.getElementById('mex').value;
@@ -2778,7 +2799,8 @@ function rRes(){
   var exam=document.getElementById('re').value,cls=document.getElementById('rc').value;
   var list=marks.filter(function(m){return m.exam===exam;});
   var _sm=stuMap();
-  if(cls)list=list.filter(function(m){var s=_sm[m.stuId];return s&&s.cls===cls;});
+  var rq=(document.getElementById('rq').value||'').toLowerCase().trim();
+  if(cls||rq)list=list.filter(function(m){var s=_sm[m.stuId];return s&&(!cls||s.cls===cls)&&(!rq||s.name.toLowerCase().indexOf(rq)!==-1);});
   var _rmore=list.length>_resLimit?list.length-_resLimit:0;
   var rows=list.slice(0,_resLimit).map(function(m){
     var s=_sm[m.stuId];if(!s)return'';
