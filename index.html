@@ -756,7 +756,7 @@ th{border-bottom-color:var(--butter)}
     </div>
     <!-- STUDENTS -->
     <div id="stu" class="pg">
-      <div class="tbar"><div><div class="ptit">Students</div><div class="psub" id="slbl"></div></div><button class="btn btnp" onclick="openM('em')">+ Enroll New</button></div>
+      <div class="tbar"><div><div class="ptit">Students</div><div class="psub" id="slbl"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="openImport()">&#8679; Import Students</button><button class="btn btnp" onclick="openM('em')">+ Enroll New</button></div></div>
       <div class="card" style="margin-bottom:14px"><div class="fr" style="margin:0"><div class="fg-in"><input type="text" id="ss" placeholder="Search by name..." oninput="_stuLimit=100;_rStuD()"></div><div class="fg-in" style="max-width:130px"><select id="sc" onchange="rStu()"><option value="">All Classes</option><option>Class 8</option><option>Class 9</option><option>Class 10</option></select></div><div class="fg-in" style="max-width:130px"><select id="sff" onchange="rStu()"><option value="">All Fee Status</option><option value="Paid">Paid</option><option value="Due">Due</option><option value="Overdue">Overdue</option></select></div></div></div>
       <div class="card"><div style="overflow-x:auto"><table id="stbl"></table></div></div>
     </div>
@@ -977,6 +977,12 @@ th{border-bottom-color:var(--butter)}
   <button class="btn btnp" style="width:100%;padding:12px" onclick="doEnroll()">Enroll Student</button>
 </div></div>
 
+<div id="imp" class="ov"><div class="modal" style="max-width:660px">
+  <button class="xbtn" id="imp-x" onclick="closeImport()">&#10005;</button>
+  <div class="mtit">Import Students</div>
+  <div id="imp-body"></div>
+</div></div>
+
 <div id="fm" class="ov"><div class="modal">
   <button class="xbtn" onclick="closeM('fm')">&#10005;</button>
   <div class="mtit">Record Fee Payment</div>
@@ -1130,10 +1136,9 @@ function fbSet(col,id,data){return db.collection(DB+'_'+col).doc(String(id)).set
 function fbDel(col,id){return db.collection(DB+'_'+col).doc(String(id)).delete();}
 
 function saveStudents(){
-  var batch=db.batch();
-  students.forEach(function(s){batch.set(db.collection(DB+'_students').doc(String(s.id)),s);});
-  batch.set(db.collection(DB+'_meta').doc('counters'),{nSid:nSid,nFid:nFid,nMid:nMid,seedVer:_seedVerOut||'pending'});
-  return batch.commit();
+  var ops=students.map(function(s){return function(b){b.set(db.collection(DB+'_students').doc(String(s.id)),s);};});
+  ops.push(function(b){b.set(db.collection(DB+'_meta').doc('counters'),{nSid:nSid,nFid:nFid,nMid:nMid,seedVer:_seedVerOut||'pending'});});
+  return chunkCommit(ops);
 }
 function saveFees(){
   return chunkCommit(fees.map(function(f){return function(b){b.set(db.collection(DB+'_fees').doc(String(f.id)),f);};}));
@@ -1420,6 +1425,172 @@ function updateEnrollPreview(){
   p.textContent='Monthly fee: Rs.'+fee+' ('+cls+' — all 6 subjects)';
   p.style.display='block';
 }
+
+// ── BULK IMPORT (CSV / Excel / paste) ────────────────────────────────────────
+var _imp={rows:[],busy:false,stop:false};
+function openImport(){impStep1();document.getElementById('imp').classList.add('open');}
+function closeImport(){if(_imp.busy&&!confirm('Import is still running. Close anyway? (Students already added stay saved.)'))return;_imp.stop=true;document.getElementById('imp').classList.remove('open');}
+function impTemplate(){downloadCsv('student-import-template.csv',[['Name','Class','Phone','Parent Email'],['Riya Sharma','Class 8','9876543210','riya@example.com'],['Aman Verma','9','9123456780','']]);}
+function impStep1(){
+  _imp.busy=false;_imp.stop=false;
+  document.getElementById('imp-x').style.display='';
+  document.getElementById('imp-body').innerHTML=
+  '<div style="font-size:12px;color:#475569;line-height:1.6;margin-bottom:14px">Add many students at once. Use a <b>CSV</b> or <b>Excel</b> file with the columns <b>Name, Class, Phone, Parent Email</b> (email is optional) - or just <b>copy the rows from Excel / Google Sheets and paste them</b> below.</div>'+
+  '<button class="btn btnsm" onclick="impTemplate()" style="margin-bottom:14px">&#8681; Download template (CSV)</button>'+
+  '<div class="fr"><div class="fg-in"><div class="frl">Upload file (.csv, .xlsx, .xls)</div><input type="file" id="imp-file" accept=".csv,.txt,.xlsx,.xls" onchange="impFile(this)"></div></div>'+
+  '<div class="fr"><div class="fg-in"><div class="frl">Or paste rows here</div><textarea id="imp-text" rows="6" placeholder="Name\tClass\tPhone\tParent Email&#10;Riya Sharma\t8\t9876543210\triya@example.com" style="width:100%;padding:10px 12px;border:1.5px solid #DDE1F0;border-radius:8px;font-family:monospace;font-size:12px;resize:vertical"></textarea></div></div>'+
+  '<div class="fr"><div class="fg-in" style="max-width:200px"><div class="frl">Class if a row has none</div><select id="imp-defcls"><option value="">- None (skip those rows) -</option><option>Class 8</option><option>Class 9</option><option>Class 10</option></select></div></div>'+
+  '<div class="cerr" id="imp-err" style="display:none;margin-bottom:12px"></div>'+
+  '<button class="btn btnp" style="width:100%;padding:12px" onclick="impCheck()">Check data</button>';
+}
+function impErr(m){var e=document.getElementById('imp-err');e.textContent=m;e.style.display='block';}
+function impLoadSheetJS(){
+  return new Promise(function(res,rej){
+    if(window.XLSX)return res();
+    var sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    sc.onload=function(){res();};sc.onerror=function(){rej(new Error('load'));};document.head.appendChild(sc);
+  });
+}
+function impFile(inp){
+  var f=inp.files&&inp.files[0];if(!f)return;
+  var ta=document.getElementById('imp-text'),nm=f.name.toLowerCase();
+  document.getElementById('imp-err').style.display='none';
+  var r=new FileReader();
+  if(/\.xlsx?$/.test(nm)){
+    r.onload=function(){
+      impLoadSheetJS().then(function(){
+        var wb=XLSX.read(new Uint8Array(r.result),{type:'array'});
+        ta.value=XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]]);
+      }).catch(function(){impErr('Could not read the Excel file here. In Excel use File > Save As > CSV, then upload that.');});
+    };
+    r.readAsArrayBuffer(f);
+  }else{
+    r.onload=function(){ta.value=String(r.result||'');};
+    r.readAsText(f);
+  }
+}
+function impParse(t){
+  t=String(t||'').replace(/^\uFEFF/,'');
+  var first=t.split(/\r?\n/)[0]||'';
+  var cnt=function(c){return first.split(c).length-1;};
+  var d=cnt('\t')>0?'\t':(cnt(';')>cnt(',')?';':',');
+  var rows=[],row=[],cell='',q=false;
+  for(var i=0;i<t.length;i++){
+    var c=t[i];
+    if(q){if(c==='"'){if(t[i+1]==='"'){cell+='"';i++;}else q=false;}else cell+=c;}
+    else if(c==='"')q=true;
+    else if(c===d){row.push(cell);cell='';}
+    else if(c==='\n'||c==='\r'){if(c==='\r'&&t[i+1]==='\n')i++;row.push(cell);cell='';rows.push(row);row=[];}
+    else cell+=c;
+  }
+  row.push(cell);rows.push(row);
+  return rows.filter(function(r){return r.some(function(x){return String(x).trim();});});
+}
+function impClass(v,def){
+  v=String(v||'').trim();if(!v)return def||'';
+  var m=v.match(/(10|8|9)/);if(m)return 'Class '+m[1];
+  var l=v.toLowerCase().replace(/[^a-z]/g,'');
+  if(l==='viii'||l==='eighth')return 'Class 8';if(l==='ix'||l==='ninth')return 'Class 9';if(l==='x'||l==='tenth')return 'Class 10';
+  return '';
+}
+function impPhone(v){
+  v=String(v||'').trim();if(/^\d(\.\d+)?e\+?\d+$/i.test(v))v=Number(v).toFixed(0);
+  var d=v.replace(/\D/g,'');
+  if(d.length===12&&d.indexOf('91')===0)d=d.slice(2);
+  if(d.length===11&&d[0]==='0')d=d.slice(1);
+  return d;
+}
+function impCheck(){
+  var txt=document.getElementById('imp-text').value;
+  if(!txt.trim())return impErr('Upload a file or paste some rows first.');
+  var def=document.getElementById('imp-defcls').value;
+  var data=impParse(txt);if(!data.length)return impErr('No rows found.');
+  // header detection
+  var col={name:0,cls:1,phone:2,email:3},hdr=data[0].map(function(x){return String(x).toLowerCase().replace(/[^a-z]/g,'');});
+  var isHdr=hdr.some(function(h){return /^(name|studentname|fullname|student)$/.test(h);});
+  if(isHdr){
+    col={name:-1,cls:-1,phone:-1,email:-1};
+    hdr.forEach(function(h,i){
+      if(/^(name|studentname|fullname|student)$/.test(h))col.name=i;
+      else if(/^(class|std|standard|grade|classstd)$/.test(h))col.cls=i;
+      else if(/(phone|mobile|contact|whatsapp)/.test(h)&&col.phone<0)col.phone=i;
+      else if(/email|mail/.test(h))col.email=i;
+    });
+    if(col.name<0)return impErr('Could not find a "Name" column in the header row.');
+    data=data.slice(1);
+  }
+  if(!data.length)return impErr('No student rows found under the header.');
+  var have={};students.forEach(function(x){have[x.name.toLowerCase().replace(/\s+/g,' ')+'|'+x.phone]=1;});
+  var seen={},rows=[];
+  data.forEach(function(r,i){
+    var g=function(k){return col[k]>=0?String(r[col[k]]==null?'':r[col[k]]).trim():'';};
+    var name=g('name').replace(/\s+/g,' '),cls=impClass(g('cls'),def),ph=impPhone(g('phone')),em=g('email').toLowerCase(),err='';
+    if(name.length<2)err='Missing name';
+    else if(!cls)err=g('cls')?'Unknown class "'+g('cls')+'"':'Missing class';
+    else if(!isMob(ph))err='Invalid phone';
+    else if(em&&!isEmail(em))err='Invalid email';
+    else{
+      var key=name.toLowerCase()+'|'+ph;
+      if(have[key])err='Already enrolled';
+      else if(seen[key])err='Duplicate in file';
+      seen[key]=1;
+    }
+    rows.push({n:i+1,name:name,cls:cls,phone:ph,email:em,err:err});
+  });
+  _imp.rows=rows;impPreview();
+}
+function impPreview(){
+  var ok=_imp.rows.filter(function(r){return !r.err;}),bad=_imp.rows.length-ok.length;
+  var h='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><span class="st sp">'+ok.length+' ready to import</span>'+(bad?'<span class="st sd">'+bad+' will be skipped</span>':'')+'</div>';
+  h+='<div style="max-height:320px;overflow:auto;border:1px solid #E6E8F2;border-radius:10px;margin-bottom:14px"><table style="width:100%;font-size:12px"><thead><tr><th>#</th><th>Name</th><th>Class</th><th>Phone</th><th>Status</th></tr></thead><tbody>';
+  _imp.rows.slice(0,300).forEach(function(r){
+    h+='<tr><td>'+r.n+'</td><td>'+escH(r.name)+'</td><td>'+escH(r.cls)+'</td><td>'+escH(r.phone)+'</td><td>'+(r.err?'<span style="color:#b91c1c;font-weight:700">'+escH(r.err)+'</span>':'<span style="color:#15803d;font-weight:700">Ready</span>')+'</td></tr>';
+  });
+  h+='</tbody></table></div>';
+  if(_imp.rows.length>300)h+='<div style="font-size:11px;color:#94a3b8;margin:-6px 0 12px">Showing first 300 rows of '+_imp.rows.length+'.</div>';
+  h+='<div style="font-size:12px;color:#475569;background:#F5F3FF;border-radius:8px;padding:10px 12px;margin-bottom:14px;line-height:1.6">Each student is enrolled in all 6 subjects and gets a <b>login with a private Access Code</b>. When the import finishes, a CSV with all roll numbers and access codes downloads automatically - keep it private and hand codes out safely.</div>';
+  h+='<div style="display:flex;gap:10px"><button class="btn" style="flex:0 0 auto" onclick="impStep1()">&larr; Back</button><button class="btn btnp" style="flex:1;padding:12px" '+(ok.length?'':'disabled ')+'onclick="impRun()">Import '+ok.length+' student'+(ok.length===1?'':'s')+'</button></div>';
+  document.getElementById('imp-body').innerHTML=h;
+}
+async function impRun(){
+  if(_imp.busy||_bulkBusy)return;
+  var ok=_imp.rows.filter(function(r){return !r.err;});if(!ok.length)return;
+  _imp.busy=true;_imp.stop=false;
+  document.getElementById('imp-x').style.display='none';
+  var body=document.getElementById('imp-body');
+  body.innerHTML='<div style="text-align:center;padding:24px 8px"><div style="font-size:15px;font-weight:800;color:#1E1B4B;margin-bottom:6px" id="imp-t">Saving students...</div><div style="height:10px;background:#E6E8F2;border-radius:99px;overflow:hidden;margin:14px 0"><i id="imp-b" style="display:block;height:100%;width:3%;background:linear-gradient(90deg,#14B8A6,#4F46E5);transition:width .3s"></i></div><div style="font-size:12px;color:#64748b" id="imp-s">Please keep this page open.</div><button class="btn btnsm" style="margin-top:14px" onclick="_imp.stop=true">Stop after current</button></div>';
+  var startId=nSid,added=[];
+  var subjs=['English','Maths','Science','Hindi','History','Marathi'];
+  ok.forEach(function(r){added.push({id:nSid++,name:r.name,cls:r.cls,phone:r.phone,email:r.email,subjects:subjs.slice(),join:todayStr()});});
+  added.forEach(function(x){students.push(x);});
+  try{await saveStudents();}
+  catch(e){
+    students=students.filter(function(x){return x.id<startId;});nSid=startId;_imp.busy=false;
+    body.innerHTML='<div class="cerr" style="display:block;margin-bottom:14px">Could not save the students ('+escH(e.code||e.message)+'). Nothing was imported. Check your internet and try again.</div><button class="btn btnp" onclick="impStep1()">Try again</button>';
+    document.getElementById('imp-x').style.display='';return;
+  }
+  rStu();rDash();
+  var out=[['Roll No','Name','Class','Phone','Access Code']],fail=[],tooMany=false;
+  for(var i=0;i<added.length;i++){
+    if(_imp.stop||tooMany){fail=fail.concat(added.slice(i));break;}
+    var el=document.getElementById('imp-t');if(el)el.textContent='Creating logins... '+i+' / '+added.length;
+    var bar=document.getElementById('imp-b');if(bar)bar.style.width=Math.max(3,Math.round(i/added.length*100))+'%';
+    try{var c=await createStudentLogin(added[i]);out.push([added[i].id,added[i].name,added[i].cls,added[i].phone,c]);}
+    catch(e){if(e.code==='auth/too-many-requests')tooMany=true;fail.push(added[i]);}
+    await new Promise(function(r){setTimeout(r,150);});
+  }
+  _imp.busy=false;
+  if(out.length>1)downloadCsv('student-access-codes.csv',out);
+  var h='<div style="text-align:center;padding:10px 4px"><div style="font-size:42px">&#9989;</div><div style="font-size:17px;font-weight:800;color:#1E1B4B;margin:6px 0">'+added.length+' student'+(added.length===1?'':'s')+' imported</div>';
+  h+='<div style="font-size:13px;color:#475569;line-height:1.7">Roll numbers '+added[0].id+' to '+added[added.length-1].id+' &middot; '+(out.length-1)+' login'+(out.length===2?'':'s')+' created.</div></div>';
+  if(out.length>1)h+='<div style="background:#fef3c7;border-radius:8px;padding:10px 12px;margin:10px 0;font-size:12px;color:#92400e;line-height:1.5">&#9888;&#65039; <b>student-access-codes.csv</b> was downloaded. It is the only copy of these codes - keep it private.</div>';
+  if(fail.length)h+='<div style="background:#fef2f2;border-radius:8px;padding:10px 12px;margin:10px 0;font-size:12px;color:#991b1b;line-height:1.5">'+fail.length+' student(s) were saved but their login was not created'+(tooMany?' (Firebase asked to slow down)':'')+'. Wait a few minutes, then use <b>Manage Teachers &gt; Create missing student logins</b> to finish them.</div>';
+  h+='<button class="btn btnp" style="width:100%;padding:12px;margin-top:8px" onclick="closeImport()">Done</button>';
+  body.innerHTML=h;
+  document.getElementById('imp-x').style.display='';
+  rStu();rDash();toast(added.length+' students imported');
+}
+
 function doEnroll(){
   var name=document.getElementById('en').value.trim(),cls=document.getElementById('ecl').value,ph=document.getElementById('eph').value.trim(),eml=document.getElementById('eml').value.trim();
   var subjs=['English','Maths','Science','Hindi','History','Marathi'];
