@@ -547,6 +547,77 @@ th{border-bottom-color:var(--butter)}
   .s-mob-tab{color:rgba(41,43,66,.6)}.s-mob-tab.on{color:var(--nv);background:var(--butter)}
 }
 </style>
+<style id="ut-teacher-theme">
+/* ═══ TEACHER PORTAL THEME: deep indigo + teal + amber ═══ */
+#TAP{--t-ink:#1E1B4B;--t-indigo:#4F46E5;--t-violet:#7C3AED;--t-teal:#14B8A6;--t-amber:#F59E0B}
+#TAP .t-main{background:#F4F6FB}
+#TAP .sb{background:linear-gradient(180deg,#1E1B4B 0%,#26225F 55%,#312E81 100%);border-right:none;box-shadow:4px 0 24px rgba(30,27,75,.18)}
+#TAP .sb-head,#TAP .sb-ft{border-color:rgba(255,255,255,.09)}
+#TAP .sb-icon{background:linear-gradient(135deg,#14B8A6,#0D9488)!important;color:#fff;box-shadow:0 4px 12px rgba(20,184,166,.4)}
+#TAP .sb-name,#TAP .unm{color:#fff}
+#TAP .sb-tag,#TAP .url{color:rgba(255,255,255,.5)}
+#TAP .nsec{color:rgba(167,160,255,.7)}
+#TAP .ni{color:rgba(255,255,255,.72)}
+#TAP .ni:hover{background:rgba(255,255,255,.08);color:#fff}
+#TAP .ni.on{background:linear-gradient(90deg,rgba(20,184,166,.28),rgba(20,184,166,.06));color:#5EEAD4;box-shadow:inset 3px 0 0 #14B8A6;font-weight:700}
+#TAP .ni.on svg{stroke:#5EEAD4;opacity:1}
+#TAP .nbdg{background:#F59E0B;color:#1E1B4B}
+#TAP .lout{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14);color:#fff}
+#TAP .lout:hover{background:rgba(255,255,255,.16)}
+#TAP .t-mobile-bar{background:#1E1B4B;border-bottom:1px solid rgba(255,255,255,.1)}
+#TAP .t-mobile-bar div[style*="color:#fff"]{color:#fff!important}
+#TAP .ptit{color:#1E1B4B}
+#TAP .psub{color:#64748b}
+#TAP .card{background:#fff;border:1px solid #E6E8F2;box-shadow:0 1px 2px rgba(30,27,75,.04),0 8px 24px -12px rgba(30,27,75,.12)}
+#TAP th{color:#6B6F9A;border-bottom-color:#E6E8F2}
+#TAP tr:hover td{background:#F5F3FF}
+#TAP input[type=text],#TAP input[type=number],#TAP input[type=date],#TAP input[type=email],#TAP input[type=tel],#TAP select,#TAP textarea{background:#fff;border-color:#DDE1F0}
+#TAP input:focus,#TAP select:focus,#TAP textarea:focus{border-color:#14B8A6;box-shadow:0 0 0 3px rgba(20,184,166,.18);outline:none}
+#TAP .btn{border-color:#DDE1F0;color:#312E81}
+#TAP .btn:hover{background:#EEF2FF;border-color:#C7CCF0}
+#TAP .btnp,.ov .btnp{background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;border-color:transparent;box-shadow:0 6px 16px -4px rgba(79,70,229,.45)}
+#TAP .btnp:hover,.ov .btnp:hover{background:linear-gradient(135deg,#4338CA,#6D28D9)}
+#TAP .tt-day-btn.on{background:#1E1B4B;color:#fff;border-color:#1E1B4B}
+#TAP .dc{background:linear-gradient(135deg,#fff,#F5F3FF)}
+#TAP .tt-slot,#TAP .fee-item,#TAP .score-card{border-color:#E6E8F2}
+/* dashboard / metric cards */
+#TAP .mc-or{background:linear-gradient(135deg,#4338CA,#7C3AED);color:#fff}
+#TAP .mc-gr{background:linear-gradient(135deg,#0F766E,#14B8A6);color:#fff}
+#TAP .mc-bl{background:linear-gradient(135deg,#F59E0B,#F97316);color:#fff}
+#TAP .mc-am{background:linear-gradient(135deg,#EA580C,#FB923C);color:#fff}
+#TAP .mc-pu{background:linear-gradient(135deg,#1E1B4B,#312E81);color:#fff}
+#TAP .mc-gr .mc-icon svg,#TAP .mc-am .mc-icon svg{stroke:rgba(255,255,255,.95)!important}
+#TAP .mc-gr .mbdg,#TAP .mc-am .mbdg{background:rgba(255,255,255,.22)}
+</style>
+<style id="ut-streak">
+@keyframes flame{0%,100%{transform:scale(1) rotate(-4deg)}50%{transform:scale(1.14) rotate(4deg)}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+.stk{position:relative;overflow:hidden;border-radius:20px;padding:20px 20px 18px;margin-bottom:18px;background:linear-gradient(135deg,#FF7139 0%,#FF9A3C 55%,#FFC857 100%);color:#fff;box-shadow:0 10px 0 -4px rgba(240,86,27,.35),0 20px 36px -10px rgba(255,113,57,.55)}
+.stk.cold{background:linear-gradient(135deg,#8B8FB5 0%,#A9ADCB 100%);box-shadow:0 10px 0 -4px rgba(41,43,66,.15),0 20px 36px -10px rgba(41,43,66,.3)}
+.stk-top{display:flex;align-items:center;gap:14px}
+.stk-fire{font-size:58px;line-height:1;animation:flame 1.4s ease-in-out infinite;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}
+.stk.cold .stk-fire{animation:none;filter:grayscale(1) drop-shadow(0 4px 8px rgba(0,0,0,.2));opacity:.85}
+.stk-num{font-size:52px;font-weight:900;line-height:.95;letter-spacing:-2px;text-shadow:0 3px 0 rgba(0,0,0,.12)}
+.stk-lbl{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;opacity:.95}
+.stk-best{margin-left:auto;text-align:center;background:rgba(255,255,255,.22);border-radius:14px;padding:8px 12px;backdrop-filter:blur(4px)}
+.stk-best b{display:block;font-size:20px;font-weight:900;line-height:1.1}
+.stk-best span{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;opacity:.9}
+.stk-msg{font-size:13px;font-weight:700;margin:14px 0 12px;line-height:1.4}
+.stk-days{display:flex;gap:7px;justify-content:space-between}
+.stk-d{flex:1;text-align:center}
+.stk-dot{height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.28)}
+.stk-dot.on{background:#fff;border-color:#fff;animation:pop .35s ease both}
+.stk-dot.pending{border-style:dashed;border-color:#fff}
+.stk-dot.miss{background:rgba(41,43,66,.25);border-color:rgba(41,43,66,.15)}
+.stk-dot.off{opacity:.45}
+.stk-dn{font-size:9px;font-weight:800;margin-top:5px;text-transform:uppercase;letter-spacing:.5px;opacity:.95}
+.stk-bar{height:9px;border-radius:99px;background:rgba(255,255,255,.28);margin-top:16px;overflow:hidden}
+.stk-bar i{display:block;height:100%;border-radius:99px;background:#fff;transition:width .6s ease}
+.stk-next{font-size:10px;font-weight:800;margin-top:6px;opacity:.95;display:flex;justify-content:space-between}
+.stk-badges{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.stk-b{font-size:11px;font-weight:800;padding:5px 10px;border-radius:99px;background:rgba(255,255,255,.25)}
+.stk-b.lock{opacity:.45;filter:grayscale(1)}
+</style>
 </head>
 <body>
 <div id="fb-loading">
@@ -2280,11 +2351,78 @@ function sMobTab(id,el){
   if(topTabs[idx]) topTabs[idx].classList.add('on');
 }
 
+
+// ── STREAKS (Snapchat style) ────────────────────────────────────────────────
+// A class day counts when the student is marked Present/Late. Sundays are skipped.
+// If the class timetable has slots for the student's class, only those weekdays count;
+// otherwise Mon-Sat count. Missing a class day resets the streak; today stays "pending" until marked.
+function _dstr(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function streakInfo(s){
+  var map={};
+  attOf(s.id).forEach(function(a){
+    var o=map[a.date]||(map[a.date]={ok:false,abs:false});
+    if(a.status==='Present'||a.status==='Late')o.ok=true;else if(a.status==='Absent')o.abs=true;
+  });
+  var DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],cd={};
+  (timetable||[]).forEach(function(t){if(t.cls===s.cls)cd[t.day]=1;});
+  var useTT=Object.keys(cd).length>0;
+  function counts(d){return d.getDay()!==0&&(!useTT||!!cd[DN[d.getDay()]]);}
+  var today=new Date();today.setHours(0,0,0,0);var ts=_dstr(today);
+  var keys=Object.keys(map).sort(),cur=0,best=0;
+  if(keys.length){
+    var d=new Date(keys[0]+'T00:00:00');
+    while(d<=today){
+      var k=_dstr(d),m=map[k];
+      if(d.getDay()!==0){
+        if(m&&m.ok){cur++;if(cur>best)best=cur;}
+        else if(counts(d)&&k!==ts){cur=0;}
+      }
+      d.setDate(d.getDate()+1);
+    }
+  }
+  var days=[];
+  for(var i=6;i>=0;i--){
+    var x=new Date(today);x.setDate(x.getDate()-i);var kk=_dstr(x),mm=map[kk],st;
+    if(x.getDay()===0)st='off';
+    else if(mm&&mm.ok)st='on';
+    else if(kk===ts)st='pending';
+    else if(mm&&mm.abs)st='miss';
+    else st=counts(x)?'miss':'off';
+    days.push({n:DN[x.getDay()].charAt(0),st:st});
+  }
+  return {cur:cur,best:best,days:days,doneToday:!!(map[ts]&&map[ts].ok)};
+}
+function streakCard(s){
+  var r=streakInfo(s),cur=r.cur;
+  var ms=[3,7,14,30,60,100],next=100,prev=0;
+  for(var i=0;i<ms.length;i++){if(ms[i]>cur){next=ms[i];break;}prev=ms[i];}
+  if(cur>=100){prev=100;next=100;}
+  var pct=next===prev?100:Math.round((cur-prev)/(next-prev)*100);
+  var msg=cur===0?'Start your streak - show up to class and light it up!':
+    r.doneToday?(cur>=30?'Absolute legend. Nobody is stopping you.':cur>=7?'You are on fire. Keep it going!':'Streak secured for today. Nice one!'):
+    'Attend today\'s class to keep your streak alive!';
+  var h='<div class="stk'+(cur===0?' cold':'')+'">';
+  h+='<div class="stk-top"><div class="stk-fire">&#128293;</div><div><div class="stk-num">'+cur+'</div><div class="stk-lbl">day streak</div></div>';
+  h+='<div class="stk-best"><b>'+r.best+'</b><span>Best</span></div></div>';
+  h+='<div class="stk-msg">'+msg+'</div><div class="stk-days">';
+  r.days.forEach(function(d){
+    var ic=d.st==='on'?'&#128293;':d.st==='miss'?'&#10005;':d.st==='pending'?'&#183;':'';
+    h+='<div class="stk-d"><div class="stk-dot '+d.st+'">'+ic+'</div><div class="stk-dn">'+d.n+'</div></div>';
+  });
+  h+='</div>';
+  if(cur<100){h+='<div class="stk-bar"><i style="width:'+pct+'%"></i></div><div class="stk-next"><span>Next badge</span><span>'+cur+' / '+next+' days</span></div>';}
+  h+='<div class="stk-badges">';
+  [[3,'&#10024; 3 days'],[7,'&#9889; 7 days'],[14,'&#128142; 14 days'],[30,'&#128081; 30 days']].forEach(function(b){
+    h+='<span class="stk-b'+(r.best>=b[0]?'':' lock')+'">'+b[1]+'</span>';
+  });
+  return h+'</div></div>';
+}
+
 function buildStudentHome(s){
   var ar=attOf(s.id),mr=marks.filter(function(m){return m.stuId===s.id;});
   var pct=ar.length?Math.round(ar.filter(function(a){return a.status==='Present';}).length/ar.length*100):0;
   var fr=fees.filter(function(f){return f.stuId===s.id;});
-  var html='';
+  var html=streakCard(s);
   // Notices card
   var nl=noticesForStudent(s);
   html+='<div class="s-card"><div class="s-ctit"><div class="s-ctit-icon" style="background:#fee2e2"><svg viewBox="0 0 24 24" style="stroke:#b91c1c;width:14px;height:14px;fill:none;stroke-width:2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>Notices</div>';
