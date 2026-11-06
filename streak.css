@@ -1,0 +1,27 @@
+@keyframes flame{0%,100%{transform:scale(1) rotate(-4deg)}50%{transform:scale(1.14) rotate(4deg)}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+.stk{position:relative;overflow:hidden;border-radius:20px;padding:20px 20px 18px;margin-bottom:18px;background:linear-gradient(135deg,#FF7139 0%,#FF9A3C 55%,#FFC857 100%);color:#fff;box-shadow:0 10px 0 -4px rgba(240,86,27,.35),0 20px 36px -10px rgba(255,113,57,.55)}
+.stk.cold{background:linear-gradient(135deg,#8B8FB5 0%,#A9ADCB 100%);box-shadow:0 10px 0 -4px rgba(41,43,66,.15),0 20px 36px -10px rgba(41,43,66,.3)}
+.stk-top{display:flex;align-items:center;gap:14px}
+.stk-fire{font-size:58px;line-height:1;animation:flame 1.4s ease-in-out infinite;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}
+.stk.cold .stk-fire{animation:none;filter:grayscale(1) drop-shadow(0 4px 8px rgba(0,0,0,.2));opacity:.85}
+.stk-num{font-size:52px;font-weight:900;line-height:.95;letter-spacing:-2px;text-shadow:0 3px 0 rgba(0,0,0,.12)}
+.stk-lbl{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;opacity:.95}
+.stk-best{margin-left:auto;text-align:center;background:rgba(255,255,255,.22);border-radius:14px;padding:8px 12px;backdrop-filter:blur(4px)}
+.stk-best b{display:block;font-size:20px;font-weight:900;line-height:1.1}
+.stk-best span{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;opacity:.9}
+.stk-msg{font-size:13px;font-weight:700;margin:14px 0 12px;line-height:1.4}
+.stk-days{display:flex;gap:7px;justify-content:space-between}
+.stk-d{flex:1;text-align:center}
+.stk-dot{height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.28)}
+.stk-dot.on{background:#fff;border-color:#fff;animation:pop .35s ease both}
+.stk-dot.pending{border-style:dashed;border-color:#fff}
+.stk-dot.miss{background:rgba(41,43,66,.25);border-color:rgba(41,43,66,.15)}
+.stk-dot.off{opacity:.45}
+.stk-dn{font-size:9px;font-weight:800;margin-top:5px;text-transform:uppercase;letter-spacing:.5px;opacity:.95}
+.stk-bar{height:9px;border-radius:99px;background:rgba(255,255,255,.28);margin-top:16px;overflow:hidden}
+.stk-bar i{display:block;height:100%;border-radius:99px;background:#fff;transition:width .6s ease}
+.stk-next{font-size:10px;font-weight:800;margin-top:6px;opacity:.95;display:flex;justify-content:space-between}
+.stk-badges{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.stk-b{font-size:11px;font-weight:800;padding:5px 10px;border-radius:99px;background:rgba(255,255,255,.25)}
+.stk-b.lock{opacity:.45;filter:grayscale(1)}
