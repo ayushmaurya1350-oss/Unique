@@ -590,33 +590,50 @@ th{border-bottom-color:var(--butter)}
 #TAP .mc-gr .mbdg,#TAP .mc-am .mbdg{background:rgba(255,255,255,.22)}
 </style>
 <style id="ut-streak">
-@keyframes flame{0%,100%{transform:scale(1) rotate(-4deg)}50%{transform:scale(1.14) rotate(4deg)}}
-@keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
-.stk{position:relative;overflow:hidden;border-radius:20px;padding:20px 20px 18px;margin-bottom:18px;background:linear-gradient(135deg,#FF7139 0%,#FF9A3C 55%,#FFC857 100%);color:#fff;box-shadow:0 10px 0 -4px rgba(240,86,27,.35),0 20px 36px -10px rgba(255,113,57,.55)}
-.stk.cold{background:linear-gradient(135deg,#8B8FB5 0%,#A9ADCB 100%);box-shadow:0 10px 0 -4px rgba(41,43,66,.15),0 20px 36px -10px rgba(41,43,66,.3)}
-.stk-top{display:flex;align-items:center;gap:14px}
-.stk-fire{font-size:58px;line-height:1;animation:flame 1.4s ease-in-out infinite;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}
-.stk.cold .stk-fire{animation:none;filter:grayscale(1) drop-shadow(0 4px 8px rgba(0,0,0,.2));opacity:.85}
-.stk-num{font-size:52px;font-weight:900;line-height:.95;letter-spacing:-2px;text-shadow:0 3px 0 rgba(0,0,0,.12)}
-.stk-lbl{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;opacity:.95}
-.stk-best{margin-left:auto;text-align:center;background:rgba(255,255,255,.22);border-radius:14px;padding:8px 12px;backdrop-filter:blur(4px)}
-.stk-best b{display:block;font-size:20px;font-weight:900;line-height:1.1}
-.stk-best span{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;opacity:.9}
-.stk-msg{font-size:13px;font-weight:700;margin:14px 0 12px;line-height:1.4}
-.stk-days{display:flex;gap:7px;justify-content:space-between}
+@keyframes stkFlame{0%,100%{transform:scale(1,1) skewX(0)}25%{transform:scale(.96,1.06) skewX(-2deg)}50%{transform:scale(1.04,.97) skewX(2deg)}75%{transform:scale(.98,1.05) skewX(-1deg)}}
+@keyframes stkGlow{0%,100%{filter:drop-shadow(0 0 10px rgba(255,113,57,.55))}50%{filter:drop-shadow(0 0 22px rgba(255,160,60,.95))}}
+@keyframes stkDrift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(18px,-14px) scale(1.15)}100%{transform:translate(0,0) scale(1)}}
+@keyframes stkEmber{0%{transform:translateY(0) scale(1);opacity:0}15%{opacity:.9}100%{transform:translateY(-92px) scale(.3);opacity:0}}
+@keyframes stkPop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+@keyframes stkShine{0%{transform:translateX(-120%)}100%{transform:translateX(320%)}}
+@keyframes stkPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,200,87,.55)}50%{box-shadow:0 0 0 6px rgba(255,200,87,0)}}
+@keyframes stkConf{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--x),var(--y)) rotate(var(--r));opacity:0}}
+.stk{position:relative;overflow:hidden;border-radius:22px;padding:22px 22px 18px;margin-bottom:18px;color:#fff;background:linear-gradient(145deg,#33365A 0%,#292B42 50%,#1E1B4B 100%);box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 22px 40px -16px rgba(41,43,66,.7)}
+.stk::before,.stk::after{content:"";position:absolute;border-radius:50%;filter:blur(38px);pointer-events:none;animation:stkDrift 9s ease-in-out infinite}
+.stk::before{width:190px;height:190px;left:-50px;top:-60px;background:rgba(255,113,57,.38)}
+.stk::after{width:170px;height:170px;right:-40px;bottom:-70px;background:rgba(20,184,166,.28);animation-delay:-4s}
+.stk.cold::before{background:rgba(160,165,200,.2);animation:none}.stk.cold::after{background:rgba(160,165,200,.12);animation:none}
+.stk>*{position:relative;z-index:1}
+.stk-top{display:flex;align-items:center;gap:16px}
+.stk-flame{position:relative;width:62px;height:78px;flex:0 0 auto}
+.stk-flame svg{width:100%;height:100%;transform-origin:50% 100%;animation:stkFlame 1.5s ease-in-out infinite,stkGlow 2.4s ease-in-out infinite}
+.stk.cold .stk-flame svg{animation:none;filter:grayscale(1) opacity(.55)}
+.stk-ember{position:absolute;bottom:34px;width:4px;height:4px;border-radius:50%;background:#FFC857;opacity:0;animation:stkEmber 2.6s ease-out infinite}
+.stk-num{font-size:60px;font-weight:900;line-height:.9;letter-spacing:-3px;background:linear-gradient(180deg,#fff 30%,#FFD9A8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stk-lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:2px;opacity:.7;margin-top:6px}
+.stk-best{margin-left:auto;text-align:right}
+.stk-best b{display:block;font-size:22px;font-weight:900;line-height:1}
+.stk-best span{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1.4px;opacity:.6}
+.stk-msg{font-size:13px;font-weight:600;margin:16px 0 14px;opacity:.92;line-height:1.45}
+.stk-days{display:flex;gap:8px}
 .stk-d{flex:1;text-align:center}
-.stk-dot{height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:16px;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.28)}
-.stk-dot.on{background:#fff;border-color:#fff;animation:pop .35s ease both}
-.stk-dot.pending{border-style:dashed;border-color:#fff}
-.stk-dot.miss{background:rgba(41,43,66,.25);border-color:rgba(41,43,66,.15)}
-.stk-dot.off{opacity:.45}
-.stk-dn{font-size:9px;font-weight:800;margin-top:5px;text-transform:uppercase;letter-spacing:.5px;opacity:.95}
-.stk-bar{height:9px;border-radius:99px;background:rgba(255,255,255,.28);margin-top:16px;overflow:hidden}
-.stk-bar i{display:block;height:100%;border-radius:99px;background:#fff;transition:width .6s ease}
-.stk-next{font-size:10px;font-weight:800;margin-top:6px;opacity:.95;display:flex;justify-content:space-between}
-.stk-badges{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
-.stk-b{font-size:11px;font-weight:800;padding:5px 10px;border-radius:99px;background:rgba(255,255,255,.25)}
-.stk-b.lock{opacity:.45;filter:grayscale(1)}
+.stk-dot{height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);opacity:0;animation:stkPop .45s cubic-bezier(.2,.9,.3,1.2) forwards}
+.stk-dot.on{background:linear-gradient(135deg,#FF7139,#FFB03A);border-color:transparent;box-shadow:0 6px 14px -4px rgba(255,113,57,.7)}
+.stk-dot.hol{background:rgba(255,200,87,.14);border-color:rgba(255,200,87,.55)}
+.stk-dot.pending{border:1px dashed rgba(255,255,255,.7);animation:stkPop .45s cubic-bezier(.2,.9,.3,1.2) forwards,stkPulse 2s ease-in-out .6s infinite}
+.stk-dot.miss{background:rgba(244,63,94,.12);border-color:rgba(244,63,94,.35);color:#fda4af}
+.stk-dot.off{background:transparent;border-color:rgba(255,255,255,.08);color:rgba(255,255,255,.35)}
+.stk-dn{font-size:9px;font-weight:800;margin-top:6px;text-transform:uppercase;letter-spacing:1px;opacity:.55}
+.stk-next{display:flex;align-items:center;gap:8px;margin-top:16px;padding:9px 12px;border-radius:12px;background:rgba(255,200,87,.1);border:1px solid rgba(255,200,87,.25);font-size:11.5px;font-weight:600;color:#FFE6B8}
+.stk-bar{height:5px;border-radius:99px;background:rgba(255,255,255,.1);margin-top:16px;overflow:hidden;position:relative}
+.stk-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#FF7139,#FFC857);transition:width 1s cubic-bezier(.2,.8,.2,1);position:relative;overflow:hidden}
+.stk-bar i::after{content:"";position:absolute;top:0;bottom:0;width:40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:stkShine 2.2s ease-in-out infinite}
+.stk-meta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:10px;font-weight:700;opacity:.7;letter-spacing:.4px}
+.stk-badges{display:flex;gap:6px}
+.stk-badges span{font-size:14px}.stk-badges .lock{opacity:.22;filter:grayscale(1)}
+.stk-conf{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:3}
+.stk-conf i{position:absolute;left:50%;top:46%;width:7px;height:11px;border-radius:2px;animation:stkConf 1.9s cubic-bezier(.15,.7,.3,1) forwards}
+@media(prefers-reduced-motion:reduce){.stk *,.stk::before,.stk::after{animation:none!important}.stk-dot{opacity:1}.stk-conf{display:none}}
 </style>
 </head>
 <body>
@@ -811,6 +828,14 @@ th{border-bottom-color:var(--butter)}
       </div>
       <!-- Timetable grid -->
       <div id="tt-grid"></div>
+      <div class="card" style="margin-top:16px">
+        <div class="chdr"><span class="ctit">Holidays &amp; Breaks</span></div>
+        <div style="font-size:12px;color:#64748b;line-height:1.6;margin-bottom:12px">Sundays and Indian festivals (Diwali, Holi, Raksha Bandhan, Ganesh Chaturthi, Dussehra and more) are already built in and never break a student's streak. Add your own closures here, like Diwali vacation or exam break.</div>
+        <div class="fr"><div class="fg-in"><div class="frl">Name</div><input type="text" id="hol-name" placeholder="e.g. Diwali vacation" maxlength="40"></div><div class="fg-in" style="max-width:160px"><div class="frl">From</div><input type="date" id="hol-from"></div><div class="fg-in" style="max-width:160px"><div class="frl">To (optional)</div><input type="date" id="hol-to"></div></div>
+        <div class="cerr" id="hol-err" style="display:none;margin-bottom:10px"></div>
+        <button class="btn btnp" onclick="addHol()">+ Add break</button>
+        <div id="hol-list" style="margin-top:12px"></div>
+      </div>
       <!-- Empty state -->
       <div id="tt-empty" style="display:none">
         <div class="card" style="text-align:center;padding:48px 24px">
@@ -1177,7 +1202,7 @@ function flushAtt(){
   })).catch(function(e){console.error('Att save err:',e);toast('Warning: attendance sync error');});
 }
 function saveTimetable(){
-  return db.collection(DB+'_meta').doc('timetable').set({slots:timetable});
+  return db.collection(DB+'_meta').doc('timetable').set({slots:timetable,holidays:customHol});
 }
 function saveCounters(){
   return db.collection(DB+'_meta').doc('counters').set({nSid:nSid,nFid:nFid,nMid:nMid,seedVer:_seedVerOut||'pending'});
@@ -1729,8 +1754,9 @@ function startTTSync(){
   db.collection(DB+'_meta').doc('timetable').onSnapshot(function(snap){
     if(snap.metadata.hasPendingWrites)return;
     if(!snap.exists)return;
-    timetable=snap.data().slots||[];
-    if(currentStu)buildStudentTimetable(currentStu);
+    timetable=snap.data().slots||[];customHol=snap.data().holidays||[];
+    if(currentStu){buildStudentTimetable(currentStu);buildStudentHome(currentStu);}
+    rHol();
     var t=document.getElementById('tt');if(t&&t.classList.contains('on'))rTT();
   },function(e){console.warn('TT sync',e);});
 }
@@ -1745,6 +1771,7 @@ function fmt12(t){
 function ttId(){return 'tt'+Date.now();}
 
 function rTT(){
+  try{rHol();}catch(e){}
   var days=ttFilter==='All'?DAYS:[ttFilter];
   var allSlots=timetable.slice().sort(function(a,b){return a.start.localeCompare(b.start);});
   var activeDays=days.filter(function(d){return allSlots.some(function(s){return s.day===d;});});
@@ -2272,7 +2299,7 @@ async function loadTeacherData(){
   marks=r[2].docs.map(function(d){return d.data();});
   attendance=[];r[3].docs.forEach(function(d){var x=d.data().records;if(x)attendance=attendance.concat(x);});
   var meta=r[4].exists?r[4].data():{};
-  timetable=r[5].exists?(r[5].data().slots||[]):[];
+  timetable=r[5].exists?(r[5].data().slots||[]):[];customHol=r[5].exists?(r[5].data().holidays||[]):[];
   teachers=r[6].docs.map(function(d){var o=d.data();o.uid=d.id;return o;}).sort(function(a,b){return (b.owner?1:0)-(a.owner?1:0)||String(a.name).localeCompare(b.name);});
   var mx=function(a,k){return a.reduce(function(m,x){return Math.max(m,x[k]||0);},0);};
   nSid=Math.max(meta.nSid||1,mx(students,'id')+1);nFid=Math.max(meta.nFid||101,mx(fees,'id')+1);nMid=Math.max(meta.nMid||1,mx(marks,'id')+1);
@@ -2295,7 +2322,7 @@ async function loadStudentData(id){
   students=[stu];
   fees=r[0].docs.map(function(d){return d.data();});
   marks=r[1].docs.map(function(d){return d.data();});
-  timetable=r[2].exists?(r[2].data().slots||[]):[];
+  timetable=r[2].exists?(r[2].data().slots||[]):[];customHol=r[2].exists?(r[2].data().holidays||[]):[];
   attendance=[];r.slice(3).forEach(function(d){if(d.exists){var x=d.data().records;if(x)attendance=attendance.concat(x);}});
   startTTSync();startNoticeSync();
 }
@@ -2523,11 +2550,26 @@ function sMobTab(id,el){
 }
 
 
-// ── STREAKS (Snapchat style) ────────────────────────────────────────────────
-// A class day counts when the student is marked Present/Late. Sundays are skipped.
-// If the class timetable has slots for the student's class, only those weekdays count;
-// otherwise Mon-Sat count. Missing a class day resets the streak; today stays "pending" until marked.
+// ── STREAKS · linked to the Indian calendar ─────────────────────────────────
+// Sundays, Indian festivals/public holidays (built-in list) and any teacher-added breaks NEVER break a streak.
+// A class day counts when the student is Present/Late; missing a real class day resets it. Today stays "pending".
+var customHol=[];
+var IND_HOL={
+ '2026-01-26':['Republic Day','🇮🇳'],'2026-02-19':['Shivaji Jayanti','🚩'],'2026-03-04':['Holi','🎨'],'2026-03-19':['Gudi Padwa','🏵️'],'2026-03-21':['Eid ul-Fitr','🌙'],
+ '2026-03-31':['Mahavir Jayanti','🕊️'],'2026-04-03':['Good Friday','✝️'],'2026-04-14':['Ambedkar Jayanti','💙'],'2026-05-01':['Maharashtra Day','🏛️'],'2026-05-28':['Bakrid','🌙'],
+ '2026-06-26':['Muharram','🌙'],'2026-08-15':['Independence Day','🇮🇳'],'2026-08-26':['Id-e-Milad','🌙'],'2026-08-28':['Raksha Bandhan','🎀'],'2026-09-04':['Janmashtami','🦚'],
+ '2026-09-14':['Ganesh Chaturthi','🐘'],'2026-10-02':['Gandhi Jayanti','🕊️'],'2026-10-19':['Mahashtami','🔱'],'2026-10-20':['Dussehra','🏹'],'2026-11-08':['Diwali','🪔'],
+ '2026-11-09':['Diwali','🪔'],'2026-11-10':['Diwali - Bali Pratipada','🪔'],'2026-11-11':['Bhai Dooj','🎁'],'2026-11-24':['Guru Nanak Jayanti','🙏'],'2026-12-25':['Christmas','🎄'],
+ '2027-01-14':['Makar Sankranti','🪁'],'2027-01-26':['Republic Day','🇮🇳'],'2027-02-19':['Shivaji Jayanti','🚩'],'2027-03-10':['Eid ul-Fitr','🌙'],'2027-03-22':['Holi','🎨'],
+ '2027-03-26':['Good Friday','✝️'],'2027-04-14':['Ambedkar Jayanti','💙'],'2027-05-01':['Maharashtra Day','🏛️'],'2027-06-16':['Muharram','🌙'],'2027-08-15':['Independence Day','🇮🇳'],
+ '2027-08-17':['Raksha Bandhan','🎀'],'2027-09-04':['Ganesh Chaturthi','🐘'],'2027-10-02':['Gandhi Jayanti','🕊️'],'2027-10-09':['Dussehra','🏹'],'2027-10-29':['Diwali','🪔'],'2027-12-25':['Christmas','🎄']
+};
 function _dstr(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function holInfo(ds){
+  if(IND_HOL[ds])return {name:IND_HOL[ds][0],ic:IND_HOL[ds][1]};
+  for(var i=0;i<customHol.length;i++){var h=customHol[i];if(h.from<=ds&&ds<=(h.to||h.from))return {name:h.name,ic:'🏖️'};}
+  return null;
+}
 function streakInfo(s){
   var map={};
   attOf(s.id).forEach(function(a){
@@ -2537,14 +2579,15 @@ function streakInfo(s){
   var DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],cd={};
   (timetable||[]).forEach(function(t){if(t.cls===s.cls)cd[t.day]=1;});
   var useTT=Object.keys(cd).length>0;
-  function counts(d){return d.getDay()!==0&&(!useTT||!!cd[DN[d.getDay()]]);}
+  function rest(d){return d.getDay()===0||!!holInfo(_dstr(d));}
+  function counts(d){return !rest(d)&&(!useTT||!!cd[DN[d.getDay()]]);}
   var today=new Date();today.setHours(0,0,0,0);var ts=_dstr(today);
   var keys=Object.keys(map).sort(),cur=0,best=0;
   if(keys.length){
     var d=new Date(keys[0]+'T00:00:00');
     while(d<=today){
       var k=_dstr(d),m=map[k];
-      if(d.getDay()!==0){
+      if(!rest(d)){
         if(m&&m.ok){cur++;if(cur>best)best=cur;}
         else if(counts(d)&&k!==ts){cur=0;}
       }
@@ -2553,42 +2596,86 @@ function streakInfo(s){
   }
   var days=[];
   for(var i=6;i>=0;i--){
-    var x=new Date(today);x.setDate(x.getDate()-i);var kk=_dstr(x),mm=map[kk],st;
-    if(x.getDay()===0)st='off';
-    else if(mm&&mm.ok)st='on';
+    var x=new Date(today);x.setDate(x.getDate()-i);var kk=_dstr(x),mm=map[kk],st,ic='',hi=holInfo(kk);
+    if(x.getDay()===0){st='off';ic='&#9728;';}
+    else if(hi){st='hol';ic=hi.ic;}
+    else if(mm&&mm.ok){st='on';ic='&#10003;';}
     else if(kk===ts)st='pending';
-    else if(mm&&mm.abs)st='miss';
-    else st=counts(x)?'miss':'off';
-    days.push({n:DN[x.getDay()].charAt(0),st:st});
+    else if(mm&&mm.abs){st='miss';ic='&#10005;';}
+    else{st=counts(x)?'miss':'off';ic=st==='miss'?'&#10005;':'';}
+    days.push({n:DN[x.getDay()],st:st,ic:ic,t:hi?hi.name:''});
   }
-  return {cur:cur,best:best,days:days,doneToday:!!(map[ts]&&map[ts].ok)};
+  // next festival / break in the coming 3 weeks
+  var nxt=null;
+  for(var j=0;j<=21&&!nxt;j++){var y=new Date(today);y.setDate(y.getDate()+j);var h2=holInfo(_dstr(y));if(h2)nxt={name:h2.name,ic:h2.ic,in:j,d:y};}
+  return {cur:cur,best:best,days:days,doneToday:!!(map[ts]&&map[ts].ok),restToday:rest(today),holToday:holInfo(ts),sunToday:today.getDay()===0,next:nxt};
 }
+var STK_MS=[3,7,14,30,60,100];
 function streakCard(s){
-  var r=streakInfo(s),cur=r.cur;
-  var ms=[3,7,14,30,60,100],next=100,prev=0;
-  for(var i=0;i<ms.length;i++){if(ms[i]>cur){next=ms[i];break;}prev=ms[i];}
-  if(cur>=100){prev=100;next=100;}
-  var pct=next===prev?100:Math.round((cur-prev)/(next-prev)*100);
-  var msg=cur===0?'Start your streak - show up to class and light it up!':
-    r.doneToday?(cur>=30?'Absolute legend. Nobody is stopping you.':cur>=7?'You are on fire. Keep it going!':'Streak secured for today. Nice one!'):
-    'Attend today\'s class to keep your streak alive!';
-  var h='<div class="stk'+(cur===0?' cold':'')+'">';
-  h+='<div class="stk-top"><div class="stk-fire">&#128293;</div><div><div class="stk-num">'+cur+'</div><div class="stk-lbl">day streak</div></div>';
+  var r=streakInfo(s),cur=r.cur,next=100,prev=0;
+  for(var i=0;i<STK_MS.length;i++){if(STK_MS[i]>cur){next=STK_MS[i];break;}prev=STK_MS[i];}
+  var pct=cur>=100?100:Math.round((cur-prev)/(next-prev)*100);
+  var msg;
+  if(r.holToday)msg=r.holToday.ic+' Happy '+escH(r.holToday.name)+'! Your streak is safe today.';
+  else if(r.sunToday)msg='Sunday is a rest day - your streak is safe. See you tomorrow!';
+  else if(cur===0)msg='Start your streak - show up to class and light it up.';
+  else if(r.doneToday)msg=cur>=30?'Legend status. Nobody is stopping you.':cur>=7?'You are on fire. Keep it going!':'Locked in for today. Nice one!';
+  else msg='Attend today\'s class to keep your streak alive.';
+  var h='<div class="stk'+(cur===0?' cold':'')+'" id="stk-card">';
+  h+='<div class="stk-top"><div class="stk-flame"><svg viewBox="0 0 64 80"><defs><linearGradient id="sfg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC857"/><stop offset=".55" stop-color="#FF7139"/><stop offset="1" stop-color="#E8421B"/></linearGradient><linearGradient id="sfg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF6D6"/><stop offset="1" stop-color="#FFC857"/></linearGradient></defs><path fill="url(#sfg1)" d="M32 2C36 18 54 28 54 50a22 22 0 0 1-44 0C10 38 18 30 22 22c2 8 6 12 10 12C28 24 28 12 32 2z"/><path fill="url(#sfg2)" d="M32 36c3 8 12 12 12 22a12 12 0 0 1-24 0c0-6 4-9 6-14 2 4 4 5 6 5-2-5-1-9 0-13z"/></svg>';
+  if(cur>0)h+='<i class="stk-ember" style="left:18px;animation-delay:0s"></i><i class="stk-ember" style="left:30px;animation-delay:.9s"></i><i class="stk-ember" style="left:42px;animation-delay:1.7s"></i><i class="stk-ember" style="left:26px;animation-delay:2.1s"></i>';
+  h+='</div><div><div class="stk-num" id="stk-num" data-v="'+cur+'">'+cur+'</div><div class="stk-lbl">day streak</div></div>';
   h+='<div class="stk-best"><b>'+r.best+'</b><span>Best</span></div></div>';
   h+='<div class="stk-msg">'+msg+'</div><div class="stk-days">';
-  r.days.forEach(function(d){
-    var ic=d.st==='on'?'&#128293;':d.st==='miss'?'&#10005;':d.st==='pending'?'&#183;':'';
-    h+='<div class="stk-d"><div class="stk-dot '+d.st+'">'+ic+'</div><div class="stk-dn">'+d.n+'</div></div>';
-  });
+  r.days.forEach(function(d,i){h+='<div class="stk-d" title="'+escH(d.t)+'"><div class="stk-dot '+d.st+'" style="animation-delay:'+(i*70)+'ms">'+d.ic+'</div><div class="stk-dn">'+d.n+'</div></div>';});
   h+='</div>';
-  if(cur<100){h+='<div class="stk-bar"><i style="width:'+pct+'%"></i></div><div class="stk-next"><span>Next badge</span><span>'+cur+' / '+next+' days</span></div>';}
-  h+='<div class="stk-badges">';
-  [[3,'&#10024; 3 days'],[7,'&#9889; 7 days'],[14,'&#128142; 14 days'],[30,'&#128081; 30 days']].forEach(function(b){
-    h+='<span class="stk-b'+(r.best>=b[0]?'':' lock')+'">'+b[1]+'</span>';
-  });
-  return h+'</div></div>';
+  if(r.next&&!(r.next.in===0&&r.holToday)){
+    var when=r.next.in===0?'today':r.next.in===1?'tomorrow':'in '+r.next.in+' days';
+    h+='<div class="stk-next"><span style="font-size:16px">'+r.next.ic+'</span><span><b>'+escH(r.next.name)+'</b> '+when+' &middot; '+r.next.d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'})+' &middot; streak stays safe</span></div>';
+  }
+  if(cur<100)h+='<div class="stk-bar"><i style="width:'+pct+'%"></i></div>';
+  h+='<div class="stk-meta"><span>'+(cur<100?'Next badge at '+next+' days':'Max level reached')+'</span><span class="stk-badges">';
+  [[3,'✨'],[7,'⚡'],[14,'💎'],[30,'👑']].forEach(function(b){h+='<span class="'+(r.best>=b[0]?'':'lock')+'">'+b[1]+'</span>';});
+  h+='</span></div></div>';
+  setTimeout(function(){streakFx(cur,r.doneToday);},60);
+  return h;
 }
-
+function streakFx(cur,done){
+  var n=document.getElementById('stk-num');
+  if(n&&cur>0&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){
+    var t0=null,dur=Math.min(1100,300+cur*45);
+    (function step(t){if(!document.getElementById('stk-num'))return;if(t0===null)t0=t;var p=Math.min(1,(t-t0)/dur);n.textContent=Math.round(cur*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(step);else n.textContent=cur;})(performance.now());
+  }
+  if(!done||STK_MS.indexOf(cur)<0)return;
+  var key='utStkFx'+_dstr(new Date())+'_'+cur;
+  try{if(sessionStorage.getItem(key))return;sessionStorage.setItem(key,'1');}catch(e){}
+  var card=document.getElementById('stk-card');if(!card||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches))return;
+  var box=document.createElement('div');box.className='stk-conf';var cs=['#FF7139','#FFC857','#14B8A6','#B9E9DC','#fff','#FFE6B8'];
+  for(var i=0;i<26;i++){var e=document.createElement('i'),a=Math.random()*Math.PI*2,d=70+Math.random()*130;
+    e.style.cssText='background:'+cs[i%cs.length]+';--x:'+Math.round(Math.cos(a)*d)+'px;--y:'+Math.round(Math.sin(a)*d-40)+'px;--r:'+Math.round(Math.random()*720-360)+'deg;animation-delay:'+Math.round(Math.random()*150)+'ms';box.appendChild(e);}
+  card.appendChild(box);setTimeout(function(){box.remove();},2300);
+}
+// ── Teacher: school-specific holidays / breaks (stored with the timetable) ──
+function rHol(){
+  var el=document.getElementById('hol-list');if(!el)return;
+  var list=customHol.slice().sort(function(a,b){return a.from<b.from?-1:1;});
+  el.innerHTML=list.length?list.map(function(h){
+    return '<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid #E6E8F2"><span style="font-size:18px">🏖️</span><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;color:#1E1B4B">'+escH(h.name)+'</div><div style="font-size:11px;color:#94a3b8">'+fmtD(h.from)+(h.to&&h.to!==h.from?' &ndash; '+fmtD(h.to):'')+'</div></div><button class="btn btnsm btnd" onclick="delHol(\''+h.id+'\')">Del</button></div>';
+  }).join(''):'<div style="font-size:12px;color:#94a3b8;padding:6px 0">No custom breaks added.</div>';
+}
+function addHol(){
+  var nm=document.getElementById('hol-name').value.trim(),f=document.getElementById('hol-from').value,t=document.getElementById('hol-to').value||f;
+  var err=document.getElementById('hol-err');err.style.display='none';
+  if(!nm||!f){err.textContent='Enter a name and a start date.';err.style.display='block';return;}
+  if(t<f){err.textContent='End date cannot be before the start date.';err.style.display='block';return;}
+  customHol.push({id:'h'+Date.now(),name:nm,from:f,to:t});
+  document.getElementById('hol-name').value='';document.getElementById('hol-from').value='';document.getElementById('hol-to').value='';
+  saveTT();rHol();toast('Break added - streaks stay safe on these days');
+}
+function delHol(id){
+  if(!confirm('Remove this break?'))return;
+  customHol=customHol.filter(function(h){return h.id!==id;});saveTT();rHol();
+}
 function buildStudentHome(s){
   var ar=attOf(s.id),mr=marks.filter(function(m){return m.stuId===s.id;});
   var pct=ar.length?Math.round(ar.filter(function(a){return a.status==='Present';}).length/ar.length*100):0;
