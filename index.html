@@ -753,6 +753,10 @@ th{border-bottom-color:var(--butter)}
       <div class="ni" onclick="go('rpt',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Progress Reports</div>
       <div class="nsec">Admin</div>
       <div class="ni" onclick="go('tch',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/><path d="M16 11l2 2 4-4"/></svg>Manage Teachers</div>
+      <div class="ni" onclick="go('bin',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>Recycle Bin <span id="bin-cnt" style="margin-left:auto;font-size:11px;opacity:.7"></span></div>
+      <div class="ni" onclick="go('bkp',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Backup &amp; Restore</div>
+      <div class="ni" onclick="go('aud',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>Audit Log</div>
+      <div class="ni" onclick="go('ntf',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><polyline points="4 4 12 13 20 4"/></svg>Email / SMS Setup</div>
     </nav>
     <div class="sb-ft">
       <div class="uav" id="teacher-av">A</div>
@@ -878,6 +882,30 @@ th{border-bottom-color:var(--butter)}
       <div id="nt-list"></div>
     </div>
     <!-- MANAGE TEACHERS PAGE -->
+    <div id="bin" class="pg">
+      <div class="tbar"><div><div class="ptit">Recycle Bin</div><div class="psub">Deleted students are kept here for 30 days and can be restored with all their fees, marks and attendance</div></div></div>
+      <div class="card" style="padding:0;overflow:auto"><table id="bin-tbl"></table></div>
+    </div>
+    <div id="bkp" class="pg">
+      <div class="tbar"><div><div class="ptit">Backup &amp; Restore</div><div class="psub">A backup is saved automatically once a day when a teacher signs in. The last 7 are kept.</div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btnp" onclick="backupNow()">Back up now</button><button class="btn" onclick="downloadBackup()">Download backup file</button><button class="btn" onclick="document.getElementById('bkp-file').click()">Restore from file</button><input type="file" id="bkp-file" accept=".json,application/json" style="display:none" onchange="restoreFromFile(this)"></div></div>
+      <div class="card" style="padding:0;overflow:auto"><table id="bkp-tbl"></table></div>
+      <div style="font-size:12px;color:#94a3b8;margin-top:6px">Restoring replaces students, fees, marks, attendance and timetable with the backup. A safety backup of the current data is taken first. Student/teacher login accounts are not changed.</div>
+    </div>
+    <div id="aud" class="pg">
+      <div class="tbar"><div><div class="ptit">Audit Log</div><div class="psub">Who did what and when (latest 300 actions)</div></div><button class="btn" onclick="rAudit()">Refresh</button></div>
+      <div class="card" style="padding:0;overflow:auto"><table id="aud-tbl"></table></div>
+    </div>
+    <div id="ntf" class="pg">
+      <div class="tbar"><div><div class="ptit">Email / SMS Notifications</div><div class="psub">Payment receipts, fee reminders and account alerts</div></div></div>
+      <div class="card">
+        <div class="frl">Notification webhook URL</div>
+        <input type="url" id="ntf-url" placeholder="https://script.google.com/macros/s/.../exec" style="width:100%;margin-bottom:10px">
+        <div style="display:flex;gap:18px;flex-wrap:wrap;margin-bottom:12px;font-size:13px"><label><input type="checkbox" id="ntf-auto"> Send automatically (payment receipts, suspension notices)</label><label><input type="checkbox" id="ntf-email" checked> Email</label><label><input type="checkbox" id="ntf-sms" checked> SMS</label></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btnp" onclick="saveNotifyCfg()">Save settings</button><button class="btn" onclick="testNotify()">Send test</button><button class="btn" onclick="remindDues()">Send fee reminders now</button></div>
+        <div style="font-size:12px;color:#64748b;margin-top:14px;line-height:1.6">The app calls your webhook with a JSON body: <code>{channel:"email"|"sms", to, name, subject, message}</code>. Point it at a Google Apps Script web app (email), or a Zapier / Make / Twilio / MSG91 / EmailJS endpoint that sends the message. Without a webhook, <b>Send fee reminders now</b> opens ready-to-send email/SMS links instead.</div>
+      </div>
+    </div>
     <div id="tch" class="pg">
       <div class="tbar">
         <div><div class="ptit">Manage Teachers</div><div class="psub">View, edit or remove teacher accounts</div></div>
@@ -1006,6 +1034,12 @@ th{border-bottom-color:var(--butter)}
   <button class="xbtn" id="imp-x" onclick="closeImport()">&#10005;</button>
   <div class="mtit">Import Students</div>
   <div id="imp-body"></div>
+</div></div>
+
+<div id="rmm" class="ov"><div class="modal">
+  <button class="xbtn" onclick="closeM('rmm')">&#10005;</button>
+  <div class="mtit" id="rmm-t">Send reminders</div>
+  <div id="rmm-b" style="max-height:55vh;overflow:auto;font-size:13px"></div>
 </div></div>
 
 <div id="fm" class="ov"><div class="modal">
@@ -1197,7 +1231,7 @@ function flushAtt(){
   var d=_dirtyAtt;_dirtyAtt={};
   return chunkCommit(keys.map(function(k){
     var stuId=d[k][0],subj=d[k][1];
-    var recs=attOf(stuId).filter(function(a){return a.subject===subj;});
+    var _seen={},recs=attOf(stuId).filter(function(a){if(a.subject!==subj)return false;var k=a.date+'|'+a.cls;if(_seen[k])return false;_seen[k]=1;return true;});
     return function(b){b.set(db.collection(DB+'_att').doc(k),{records:recs});};
   })).catch(function(e){console.error('Att save err:',e);toast('Warning: attendance sync error');});
 }
@@ -1214,6 +1248,25 @@ function saveAll(){
 }
 function saveAttendance(){clearTimeout(_attTimer);_attTimer=setTimeout(flushAtt,800);}
 
+// ── VALIDATION HELPERS ───────────────────────────────────────────────────────
+var MAX_SCORE=100,MAX_FEE=100000;
+function isRealDate(v){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(v||'')))return false;
+  var p=v.split('-'),y=+p[0],m=+p[1],d=+p[2],dt=new Date(y,m-1,d);
+  return dt.getFullYear()===y&&dt.getMonth()===m-1&&dt.getDate()===d&&y>=2000&&y<=2100;
+}
+function validDate(v,opts){
+  opts=opts||{};
+  if(!isRealDate(v))return 'Enter a valid date.';
+  if(opts.noFuture&&v>todayStr())return 'Date cannot be in the future.';
+  if(opts.maxAheadDays){var lim=new Date();lim.setDate(lim.getDate()+opts.maxAheadDays);var ls=lim.getFullYear()+'-'+('0'+(lim.getMonth()+1)).slice(-2)+'-'+('0'+lim.getDate()).slice(-2);if(v>ls)return 'Date is too far in the future.';}
+  return '';
+}
+function parseMoney(raw){
+  var t=String(raw==null?'':raw).trim();
+  if(!/^\d+(\.\d{1,2})?$/.test(t))return NaN;
+  return Math.round(parseFloat(t));
+}
 function todayStr(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
 function rn(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 
@@ -1296,6 +1349,7 @@ function initTeacher(){
   document.getElementById('dd').textContent=gr+', '+(currentTeacher?currentTeacher.name:'Ayush Sir')+' - '+new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   document.getElementById('sb-cnt').textContent=students.length;
   rDash();
+  loadNotifyCfg();setTimeout(autoBackupIfDue,4000);
 }
 var _rStuD=_deb(function(){rStu();},180);
 function go(id,el){
@@ -1305,6 +1359,7 @@ function go(id,el){
   if(id==='dash')rDash();if(id==='stu')rStu();if(id==='att')rAtt();
   if(id==='fee'){rFeeM();rFees();}if(id==='res')rRes();if(id==='rpt')rRptList();
   if(id==='tt')rTT();if(id==='tch')rTeachers();if(id==='ntc')rNotices();if(id==='rev')rRev();
+  if(id==='aud')rAudit();if(id==='bin')rTrash();if(id==='bkp')rBackups();if(id==='ntf')rNotifySettings();
 }
 function goTo(id){
   var el=null;document.querySelectorAll('.ni').forEach(function(n){if((n.getAttribute('onclick')||'').indexOf("go('"+id+"'")===0)el=n;});
@@ -1370,13 +1425,14 @@ function rStu(){
     var last=_lf[s.id]||'No Record';
     var ar=attOf(s.id);
     var pct=ar.length?Math.round(ar.filter(function(a){return a.status==='Present';}).length/ar.length*100):0;
-    return '<tr><td>'+ncell(s)+'</td><td><span class="st sbb">'+s.cls+'</span></td>'+
+    return '<tr'+(s.suspended?' style="opacity:.6"':'')+'><td>'+ncell(s)+(s.suspended?' <span class="st sab">Suspended</span>':'')+'</td><td><span class="st sbb">'+s.cls+'</span></td>'+
       '<td style="font-weight:700;color:var(--or)">Rs.'+getFee(s.cls)+'/mo</td>'+
       '<td style="font-weight:600;color:#64748b">'+s.id+'</td>'+
       '<td>'+bdg(last==='No Record'?'Due':last)+'</td>'+
       '<td>'+pbEl(pct,90)+'</td>'+
       '<td style="white-space:nowrap">'+
         '<button class="btn btnsm" style="margin-right:4px" onclick="viewStu('+s.id+')">View</button>'+
+        (s.suspended?'<button class="btn btnsm" style="margin-right:4px;color:#16a34a" onclick="reactivateStu('+s.id+')">Reactivate</button>':'<button class="btn btnsm" style="margin-right:4px" onclick="suspendStu('+s.id+')">Suspend</button>')+
         '<button class="btn btnsm btnd" onclick="delStu('+s.id+')">Del</button>'+
       '</td></tr>';
   }).join('');
@@ -1384,7 +1440,7 @@ function rStu(){
   document.getElementById('stbl').innerHTML=thead(['Name','Class','Monthly Fee','Roll','Fee Status','Att%','Actions'])+
     '<tbody>'+(rows||'<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:28px">No students found</td></tr>')+'</tbody>';
 }
-function delStu(id){
+function _delStuHard(id){
   if(!confirm('Remove this student? This will also delete all their fees, marks and attendance.'))return;
   students=students.filter(function(s){return s.id!==id;});
   // Delete student fees from Firestore
@@ -1620,8 +1676,10 @@ function doEnroll(){
   var name=document.getElementById('en').value.trim(),cls=document.getElementById('ecl').value,ph=document.getElementById('eph').value.trim(),eml=document.getElementById('eml').value.trim();
   var subjs=['English','Maths','Science','Hindi','History','Marathi'];
   if(!name){alert('Enter student name.');return;}if(!isMob(ph)){alert('Enter valid 10-digit mobile.');return;}
+  if(eml&&!isEmail(eml)){alert('Enter a valid email address or leave it blank.');return;}
+  if(students.some(function(x){return x.name.toLowerCase()===name.toLowerCase()&&x.phone===ph;})&&!confirm('A student named '+name+' with this mobile number already exists. Enrol anyway?'))return;
   var newStu={id:nSid++,name:name,cls:cls,phone:ph,email:eml,subjects:subjs,join:todayStr()};students.push(newStu);
-  saveAll();closeM('em');
+  saveAll();closeM('em');logAudit('student.enrol','Enrolled '+newStu.name+' ('+newStu.cls+')',newStu.id);
   document.getElementById('en').value='';document.getElementById('eph').value='';document.getElementById('eml').value='';
   rStu();rDash();toast('Student enrolled! Roll No: '+newStu.id);
   createStudentLogin(newStu).then(function(code){showCredCard('Student Login Created','Give this to '+newStu.name,[['Roll Number',String(newStu.id)],['Access Code',code]],'This code is shown only once. Write it down and hand it over privately.');}).catch(function(e){alert('Student added, but the login could not be created ('+(e.code||e.message)+'). Use Teachers > Create missing student logins.');});
@@ -1648,17 +1706,20 @@ function updCustomFee(){
 function doCustomFee(){
   var id=parseInt(document.getElementById('cf-stu').value);
   var month=document.getElementById('cf-month').value;
-  var amt=parseInt(document.getElementById('cf-amount').value);
+  var amt=parseMoney(document.getElementById('cf-amount').value);
   var note=document.getElementById('cf-note').value.trim();
   var errEl=document.getElementById('cf-err');
   errEl.style.display='none';
   var s=students.find(function(x){return x.id===id;});if(!s)return;
-  if(!amt||amt<0){errEl.textContent='Please enter a valid amount.';errEl.style.display='block';return;}
+  if(isNaN(amt)||amt<=0){errEl.textContent='Enter a valid amount greater than 0 (negative amounts are not allowed).';errEl.style.display='block';return;}
+  if(amt>MAX_FEE){errEl.textContent='Amount looks too large (maximum Rs.'+MAX_FEE.toLocaleString('en-IN')+').';errEl.style.display='block';return;}
   if(!note){errEl.textContent='Please add a reason for the custom fee.';errEl.style.display='block';return;}
   var ex=fees.find(function(f){return f.stuId===id&&f.month===month;});
+  if(ex&&ex.status==='Paid'){errEl.textContent='This month is already paid. A paid fee cannot be changed.';errEl.style.display='block';return;}
   if(ex){ex.customFee=amt;ex.feeNote=note;ex.amount=amt;}
   else{fees.push({id:nFid++,stuId:id,month:month,subjects:s.subjects,amount:amt,customFee:amt,feeNote:note,mode:'-',date:'-',status:'Due'});}
   saveAll();closeM('cfm');rFeeM();rFees();
+  logAudit('fee.custom','Custom fee Rs.'+amt+' for '+s.name+' ('+month+'): '+note,s.id);
   toast('Custom fee of Rs.'+amt+' set for '+s.name+'!');
 }
 function openCustomFeeForRecord(fid){
@@ -1675,6 +1736,9 @@ function openCustomFeeForRecord(fid){
 // ATTENDANCE
 function rAtt(){
   var cls=document.getElementById('ac').value,subj=document.getElementById('asj').value,date=document.getElementById('ad').value;
+  var _dEl=document.getElementById('ad');if(_dEl){_dEl.max=todayStr();_dEl.min='2000-01-01';}
+  var _dErr=validDate(date,{noFuture:true});
+  if(_dErr){document.getElementById('atbl').innerHTML='<tr><td style="text-align:center;color:#ef4444;padding:28px;font-weight:700">'+_dErr+' Pick a valid date (not in the future).</td></tr>';document.getElementById('asum').style.display='none';return;}
   var sl=students.filter(function(s){return s.cls===cls&&s.subjects.indexOf(subj)!==-1;});
   if(!sl.length){document.getElementById('atbl').innerHTML='<tr><td style="text-align:center;color:#94a3b8;padding:28px">No students for '+subj+' in '+cls+'</td></tr>';document.getElementById('asum').style.display='none';return;}
   var _aq=(document.getElementById('aq').value||'').toLowerCase().trim();
@@ -1699,6 +1763,7 @@ function updSum(cls,subj,date,sl){
   document.getElementById('asum').style.display='block';
 }
 function setAtt(stuId,status,date,cls,subj,btn){
+  var _de=validDate(date,{noFuture:true});if(_de){alert('Attendance not saved: '+_de);return;}
   // 1) update the screen instantly
   var row=btn.closest('tr');
   row.querySelectorAll('.abtn').forEach(function(b){b.classList.remove('present','absent','late');});
@@ -1706,19 +1771,35 @@ function setAtt(stuId,status,date,cls,subj,btn){
   var sc=document.getElementById('ast'+stuId);if(sc)sc.innerHTML=bdg(status);
   // 2) then update data
   var found=false;
-  var _ar=attOf(stuId);for(var i=0;i<_ar.length;i++){var a=_ar[i];if(a.date===date&&a.subject===subj&&a.cls===cls){a.status=status;found=true;break;}}
+  var _ar=attOf(stuId);for(var i=0;i<_ar.length;i++){var a=_ar[i];if(a.date===date&&a.subject===subj&&a.cls===cls){if(!found){a.status=status;found=true;}else{a._dup=true;}}}
+  if(found)dedupeAtt(stuId,subj);
   if(!found)attendance.push({stuId:stuId,status:status,date:date,subject:subj,cls:cls});
   markAttDirty(stuId,subj);saveAttendance();
   updSum(cls,subj,date,students.filter(function(s){return s.cls===cls&&s.subjects.indexOf(subj)!==-1;}));
 }
 window.addEventListener('beforeunload',function(){if(Object.keys(_dirtyAtt).length)flushAtt();});
+function dedupeAtt(stuId,subj){
+  var seen={};
+  attendance=attendance.filter(function(a){
+    if(a.stuId!==stuId||a.subject!==subj)return true;
+    var k=a.date+'|'+a.cls;if(seen[k])return false;seen[k]=1;return true;
+  });
+}
+var _attSaveBusy=false;
 function doSaveAttBtn(){
   var cls=document.getElementById('ac').value,subj=document.getElementById('asj').value,date=document.getElementById('ad').value;
+  var _de=validDate(date,{noFuture:true});if(_de){alert('Attendance not saved: '+_de);return;}
+  if(_attSaveBusy)return;
+  var _sl=students.filter(function(s){return s.cls===cls&&s.subjects.indexOf(subj)!==-1;});
+  var _already=_sl.length&&_sl.every(function(s){return attOf(s.id).some(function(a){return a.date===date&&a.subject===subj&&a.cls===cls;});})&&!Object.keys(_dirtyAtt).length;
+  if(_already&&!confirm('Attendance for '+cls+' / '+subj+' on '+fmtD(date)+' is already recorded.\n\nSaving again will not create duplicates, but will keep the current marks. Continue?'))return;
+  _attSaveBusy=true;setTimeout(function(){_attSaveBusy=false;},1500);
   if(date){students.filter(function(s){return s.cls===cls&&s.subjects.indexOf(subj)!==-1;}).forEach(function(s){
     var has=attOf(s.id).some(function(a){return a.date===date&&a.subject===subj&&a.cls===cls;});
     if(!has){attendance.push({stuId:s.id,status:'Present',date:date,subject:subj,cls:cls});markAttDirty(s.id,subj);}
   });}
-  flushAtt().then(function(){toast('Attendance saved!');rAtt();});
+  _sl.forEach(function(s){dedupeAtt(s.id,subj);});
+  flushAtt().then(function(){logAudit('attendance.save','Attendance saved for '+cls+' / '+subj+' on '+fmtD(date));toast('Attendance saved!');rAtt();});
 }
 // Live sync: attendance marked on another device/tab appears here automatically
 var _attFirst=true;
@@ -2149,6 +2230,7 @@ function genCode(len){var al='ABCDEFGHJKMNPQRSTUVWXYZ23456789',a=new Uint8Array(
 function authMsg(e){
   var c=(e&&e.code)||'';
   if(c==='ut/no-profile')return 'This account has no access to the portal. Ask the owner to set it up.';
+  if(c==='ut/suspended')return 'This account is suspended. Please contact Unique Tutorials to have it reactivated.';
   if(c==='ut/wrong-tab')return e.role==='student'?'This is a student account. Use the Student tab.':'This is a teacher account. Use the Teacher tab.';
   if(c==='auth/too-many-requests')return 'Too many attempts. Please wait a few minutes and try again.';
   if(c==='auth/network-request-failed')return 'No internet connection.';
@@ -2257,7 +2339,9 @@ async function enterApp(user){
       document.getElementById('TAP').style.display='block';
       initTeacher();
     } else if(u.role==='student'){
+      if(u.suspended)throw {code:'ut/suspended'};
       await withTimeout(loadStudentData(u.stuId),30000);
+      if(students[0]&&students[0].suspended)throw {code:'ut/suspended'};
       currentStu=students[0];
       document.getElementById('LP').style.display='none';
       document.getElementById('SAP').style.display='block';
@@ -2388,17 +2472,23 @@ function updFee(){
   document.getElementById('fdtl').innerHTML=html;
   document.getElementById('ftot').innerHTML='Total: <span style="color:var(--or);font-size:18px">Rs.'+effAmt+'</span>';
 }
+var _payBusy=false;
 function doPayment(){
   var id=parseInt(document.getElementById('fstu').value),month=document.getElementById('fmo').value,mode=document.getElementById('fmd').value;
   var s=students.find(function(x){return x.id===id;});if(!s)return;
   var ex=fees.find(function(f){return f.stuId===id&&f.month===month;});
+  if(ex&&ex.status==='Paid'){alert('Duplicate entry blocked: '+s.name+' has already paid for '+month+' (receipt on '+fmtD(ex.date)+').');return;}
+  if(_payBusy)return;_payBusy=true;setTimeout(function(){_payBusy=false;},1500);
   var tod=todayStr();
   var baseAmt=getFee(s.cls);
+  if(!(baseAmt>=0)){alert('Fee amount is invalid.');return;}
   if(ex){ex.status='Paid';ex.mode=mode;ex.date=tod;if(!ex.customFee)ex.amount=baseAmt;}
   else fees.push({id:nFid++,stuId:id,month:month,subjects:s.subjects,amount:baseAmt,customFee:null,feeNote:'',mode:mode,date:tod,status:'Paid'});
   saveAll();closeM('fm');
   var rec=fees.find(function(f){return f.stuId===id&&f.month===month;});
   if(rec)showRct(rec.id);
+  logAudit('fee.payment','Payment recorded for '+s.name+' ('+month+', '+mode+', Rs.'+((rec&&(rec.customFee||rec.amount))||baseAmt)+')',s.id);
+  if(rec)notifyStudents([s],'Payment received - Unique Tutorials','Dear '+s.name+', we received your fee of Rs.'+(rec.customFee||rec.amount)+' for '+month+' on '+fmtD(tod)+'. Receipt no. UT-'+('000'+rec.id).slice(-4)+'. Thank you!',true);
   rFeeM();rFees();toast('Payment recorded!');
 }
 function showRct(fid){
@@ -2429,12 +2519,20 @@ function mkIn(){
   var s=students.find(function(x){return x.id===id;});if(!s)return;
   var ex=marks.find(function(m){return m.stuId===id&&m.exam===exam;});
   document.getElementById('min').innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+
-    s.subjects.map(function(sub){var fid='mk'+sub.replace(/\s/g,'_'),val=ex&&ex.scores[sub]!==undefined?ex.scores[sub]:'';return'<div class="fg-in"><div class="frl">'+sub+' /100</div><input type="number" id="'+fid+'" min="0" max="100" value="'+val+'" placeholder="Score"></div>';}).join('')+'</div>';
+    s.subjects.map(function(sub){var fid='mk'+sub.replace(/\s/g,'_'),val=ex&&ex.scores[sub]!==undefined?ex.scores[sub]:'';return'<div class="fg-in"><div class="frl">'+sub+' /100</div><input type="number" id="'+fid+'" min="0" max="100" step="1" value="'+val+'" placeholder="Score" oninput="if(this.value!==\'\'&&(+this.value>100||+this.value<0)){this.style.borderColor=\'#ef4444\';}else{this.style.borderColor=\'\';}"></div>';}).join('')+'</div>';
 }
 function doMarks(){
   var stuId=parseInt(document.getElementById('mstu').value),exam=document.getElementById('mex').value;
   var s=students.find(function(x){return x.id===stuId;});if(!s)return;
-  var scores={};s.subjects.forEach(function(sub){var el=document.getElementById('mk'+sub.replace(/\s/g,'_'));if(el&&el.value!=='')scores[sub]=parseInt(el.value);});
+  var scores={},badMsg='';
+  s.subjects.forEach(function(sub){
+    var el=document.getElementById('mk'+sub.replace(/\s/g,'_'));if(!el||el.value==='')return;
+    var raw=String(el.value).trim(),n=Number(raw);
+    el.style.borderColor='';
+    if(raw===''||!isFinite(n)||n<0||n>MAX_SCORE||Math.floor(n)!==n){el.style.borderColor='#ef4444';if(!badMsg)badMsg=sub+': marks must be a whole number from 0 to '+MAX_SCORE+' (maximum score).';return;}
+    scores[sub]=n;
+  });
+  if(badMsg){alert(badMsg);return;}
   if(!Object.keys(scores).length){alert('Enter at least one score.');return;}
   var ex=marks.find(function(m){return m.stuId===stuId&&m.exam===exam;});
   if(ex)Object.assign(ex.scores,scores);else marks.push({id:nMid++,stuId:stuId,exam:exam,scores:scores});
@@ -2667,10 +2765,13 @@ function addHol(){
   var nm=document.getElementById('hol-name').value.trim(),f=document.getElementById('hol-from').value,t=document.getElementById('hol-to').value||f;
   var err=document.getElementById('hol-err');err.style.display='none';
   if(!nm||!f){err.textContent='Enter a name and a start date.';err.style.display='block';return;}
+  var _e1=validDate(f,{maxAheadDays:1095}),_e2=validDate(t,{maxAheadDays:1095});
+  if(_e1||_e2){err.textContent='Invalid '+(_e1?'start':'end')+' date. '+(_e1||_e2);err.style.display='block';return;}
   if(t<f){err.textContent='End date cannot be before the start date.';err.style.display='block';return;}
+  if(customHol.some(function(h){return h.from===f&&h.to===t&&h.name===nm;})){err.textContent='This break is already added.';err.style.display='block';return;}
   customHol.push({id:'h'+Date.now(),name:nm,from:f,to:t});
   document.getElementById('hol-name').value='';document.getElementById('hol-from').value='';document.getElementById('hol-to').value='';
-  saveTT();rHol();toast('Break added - streaks stay safe on these days');
+  logAudit('holiday.add',nm+' ('+f+' to '+t+')');saveTT();rHol();toast('Break added - streaks stay safe on these days');
 }
 function delHol(id){
   if(!confirm('Remove this break?'))return;
@@ -2875,6 +2976,270 @@ function buildStudentTimetable(s){
 
   html+='</div>';
   document.getElementById('s-timetable').innerHTML=html;
+}
+</script>
+
+<script>
+// ════════ SAFETY FEATURES: audit log, recycle bin, suspension, backup, notifications ════════
+var TRASH_DAYS=30,_trash=[],_notifyCfg={url:'',auto:false,email:true,sms:true};
+function _who(){return currentTeacher?(currentTeacher.name||currentTeacher.email):'system';}
+function fmtTs(t){try{return new Date(t).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}catch(e){return String(t);}}
+
+// ── Audit log ────────────────────────────────────────────────────────────────
+function logAudit(action,detail,stuId){
+  if(!currentTeacher)return;
+  try{db.collection(DB+'_audit').add({ts:Date.now(),by:_who(),uid:currentTeacher.uid,action:action,detail:String(detail||'').slice(0,400),stuId:stuId||null}).catch(function(e){console.warn('audit',e);});}catch(e){}
+}
+function rAudit(){
+  var t=document.getElementById('aud-tbl');t.innerHTML='<tr><td style="padding:24px;color:#94a3b8">Loading…</td></tr>';
+  db.collection(DB+'_audit').orderBy('ts','desc').limit(300).get().then(function(q){
+    var rows=q.docs.map(function(d){var a=d.data();return '<tr><td style="white-space:nowrap">'+fmtTs(a.ts)+'</td><td>'+escH(a.by)+'</td><td><span class="st sbb">'+escH(a.action)+'</span></td><td>'+escH(a.detail)+'</td></tr>';}).join('');
+    t.innerHTML=thead(['When','By','Action','Details'])+'<tbody>'+(rows||'<tr><td colspan="4" style="text-align:center;color:#94a3b8;padding:28px">No activity logged yet</td></tr>')+'</tbody>';
+  }).catch(function(e){t.innerHTML='<tr><td style="padding:24px;color:#ef4444">Could not load the audit log ('+(e.code||e.message)+'). Publish the updated Firestore rules.</td></tr>';});
+}
+
+// ── Recycle bin (soft delete with recovery) ──────────────────────────────────
+function delStu(id){
+  var s=students.find(function(x){return x.id===id;});if(!s)return;
+  var nf=fees.filter(function(f){return f.stuId===id;}).length,nm=marks.filter(function(m){return m.stuId===id;}).length,na=attOf(id).length;
+  var typed=prompt('Delete '+s.name+' (Roll '+s.id+')?\n\nTheir '+nf+' fee record(s), '+nm+' result(s) and '+na+' attendance record(s) move to the Recycle Bin and can be restored for '+TRASH_DAYS+' days. Their login is disabled meanwhile.\n\nType the student\'s name to confirm:');
+  if(typed===null)return;
+  if(typed.trim().toLowerCase()!==s.name.trim().toLowerCase()){alert('Name did not match. Student NOT deleted.');return;}
+  var sf=fees.filter(function(f){return f.stuId===id;}),sm=marks.filter(function(m){return m.stuId===id;});
+  var att={};attOf(id).forEach(function(a){var k=attKey(a.stuId,a.subject);(att[k]=att[k]||[]).push(a);});
+  var snap={id:id,student:s,fees:sf,marks:sm,att:JSON.stringify(att),deletedAt:Date.now(),deletedBy:_who(),expiresAt:Date.now()+TRASH_DAYS*864e5};
+  db.collection(DB+'_trash').doc(String(id)).set(snap).then(function(){
+    students=students.filter(function(x){return x.id!==id;});
+    fees=fees.filter(function(f){return f.stuId!==id;});marks=marks.filter(function(m){return m.stuId!==id;});
+    attendance=attendance.filter(function(a){return a.stuId!==id;});
+    var ops=[function(b){b.delete(db.collection(DB+'_students').doc(String(id)));}];
+    sf.forEach(function(f){ops.push(function(b){b.delete(db.collection(DB+'_fees').doc(String(f.id)));});});
+    sm.forEach(function(m){ops.push(function(b){b.delete(db.collection(DB+'_marks').doc(String(m.id)));});});
+    Object.keys(att).forEach(function(k){ops.push(function(b){b.delete(db.collection(DB+'_att').doc(k));});});
+    return chunkCommit(ops);
+  }).then(function(){
+    setStudentLoginState(id,true,'deleted');
+    logAudit('student.delete','Moved '+s.name+' (Roll '+id+') to Recycle Bin',id);
+    rStu();rDash();toast('Moved to Recycle Bin - restore within '+TRASH_DAYS+' days');
+  }).catch(function(e){console.error(e);alert('Delete failed, nothing was removed: '+(e.code||e.message));});
+}
+function loadTrash(){
+  return db.collection(DB+'_trash').get().then(function(q){_trash=q.docs.map(function(d){return d.data();}).sort(function(a,b){return b.deletedAt-a.deletedAt;});var c=document.getElementById('bin-cnt');if(c)c.textContent=_trash.length||'';});
+}
+function rTrash(){
+  var t=document.getElementById('bin-tbl');t.innerHTML='<tr><td style="padding:24px;color:#94a3b8">Loading…</td></tr>';
+  loadTrash().then(function(){
+    var rows=_trash.map(function(x){
+      var left=Math.max(0,Math.ceil((x.expiresAt-Date.now())/864e5));
+      return '<tr><td><b>'+escH(x.student.name)+'</b><div style="font-size:11px;color:#94a3b8">Roll '+x.id+' · '+escH(x.student.cls)+'</div></td><td>'+fmtTs(x.deletedAt)+'<div style="font-size:11px;color:#94a3b8">by '+escH(x.deletedBy)+'</div></td><td>'+x.fees.length+' fees · '+x.marks.length+' results</td><td>'+left+' day(s)</td><td style="white-space:nowrap"><button class="btn btnsm btnp" onclick="restoreStu('+x.id+')">Restore</button> <button class="btn btnsm btnd" onclick="purgeStu('+x.id+')">Delete forever</button></td></tr>';
+    }).join('');
+    t.innerHTML=thead(['Student','Deleted','Contents','Time left','Actions'])+'<tbody>'+(rows||'<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:28px">Recycle Bin is empty</td></tr>')+'</tbody>';
+  }).catch(function(e){t.innerHTML='<tr><td style="padding:24px;color:#ef4444">Could not load ('+(e.code||e.message)+'). Publish the updated Firestore rules.</td></tr>';});
+}
+function restoreStu(id){
+  var x=_trash.find(function(t){return t.id===id;});if(!x)return;
+  if(students.some(function(s){return s.id===id;})){alert('A student with this roll number already exists.');return;}
+  var att={};try{att=JSON.parse(x.att||'{}');}catch(e){}
+  var ops=[function(b){b.set(db.collection(DB+'_students').doc(String(id)),x.student);}];
+  x.fees.forEach(function(f){ops.push(function(b){b.set(db.collection(DB+'_fees').doc(String(f.id)),f);});});
+  x.marks.forEach(function(m){ops.push(function(b){b.set(db.collection(DB+'_marks').doc(String(m.id)),m);});});
+  Object.keys(att).forEach(function(k){ops.push(function(b){b.set(db.collection(DB+'_att').doc(k),{records:att[k]});});});
+  chunkCommit(ops).then(function(){
+    students.push(x.student);students.sort(function(a,b){return a.id-b.id;});
+    fees=fees.concat(x.fees);marks=marks.concat(x.marks);
+    Object.keys(att).forEach(function(k){attendance=attendance.concat(att[k]);});
+    setStudentLoginState(id,!!x.student.suspended,x.student.suspended?'suspended':'');
+    return db.collection(DB+'_trash').doc(String(id)).delete();
+  }).then(function(){logAudit('student.restore','Restored '+x.student.name+' (Roll '+id+')',id);toast('Student restored');rTrash();rStu();rDash();}).catch(function(e){alert('Restore failed: '+(e.code||e.message));});
+}
+function purgeStu(id){
+  var x=_trash.find(function(t){return t.id===id;});if(!x)return;
+  var typed=prompt('PERMANENTLY delete '+x.student.name+'? This cannot be undone.\nType DELETE to confirm:');
+  if(typed!=='DELETE'){if(typed!==null)alert('Not deleted.');return;}
+  db.collection(DB+'_trash').doc(String(id)).delete().then(function(){
+    db.collection('ut_users').where('stuId','==',id).get().then(function(q){q.docs.forEach(function(d){if(d.data().role==='student')d.ref.delete();});}).catch(function(){});
+    logAudit('student.purge','Permanently deleted '+x.student.name+' (Roll '+id+')',id);toast('Deleted permanently');rTrash();
+  }).catch(function(e){alert('Failed: '+(e.code||e.message));});
+}
+function purgeExpiredTrash(){
+  loadTrash().then(function(){_trash.filter(function(x){return x.expiresAt<Date.now();}).forEach(function(x){
+    db.collection(DB+'_trash').doc(String(x.id)).delete();
+    db.collection('ut_users').where('stuId','==',x.id).get().then(function(q){q.docs.forEach(function(d){if(d.data().role==='student')d.ref.delete();});}).catch(function(){});
+  });}).catch(function(){});
+}
+
+// ── Suspension & recovery ────────────────────────────────────────────────────
+function setStudentLoginState(id,suspended,reason){
+  return db.collection('ut_users').where('stuId','==',id).get().then(function(q){
+    return Promise.all(q.docs.filter(function(d){return d.data().role==='student';}).map(function(d){return d.ref.update({suspended:!!suspended,suspendReason:reason||''});}));
+  }).catch(function(e){console.warn('login state',e);});
+}
+function suspendStu(id){
+  var s=students.find(function(x){return x.id===id;});if(!s)return;
+  var why=prompt('Suspend '+s.name+'? They will not be able to sign in until reactivated. Their records stay untouched.\n\nReason (required):');
+  if(why===null)return;why=why.trim();
+  if(!why){alert('Please enter a reason.');return;}
+  s.suspended=true;s.suspendedAt=Date.now();s.suspendReason=why;
+  db.collection(DB+'_students').doc(String(id)).set(s).then(function(){return setStudentLoginState(id,true,why);}).then(function(){
+    logAudit('student.suspend','Suspended '+s.name+': '+why,id);rStu();toast(s.name+' suspended');
+    notifyStudents([s],'Account suspended - Unique Tutorials','Dear '+s.name+', your Unique Tutorials portal access has been suspended. Reason: '+why+'. Please contact the institute.',true);
+  }).catch(function(e){s.suspended=false;alert('Could not suspend: '+(e.code||e.message));rStu();});
+}
+function reactivateStu(id){
+  var s=students.find(function(x){return x.id===id;});if(!s)return;
+  if(!confirm('Reactivate '+s.name+'? They will be able to sign in again.'))return;
+  var prev={a:s.suspendedAt,r:s.suspendReason};
+  s.suspended=false;delete s.suspendedAt;delete s.suspendReason;s.reactivatedAt=Date.now();
+  db.collection(DB+'_students').doc(String(id)).set(s).then(function(){return setStudentLoginState(id,false,'');}).then(function(){
+    logAudit('student.reactivate','Reactivated '+s.name,id);rStu();toast(s.name+' reactivated');
+    notifyStudents([s],'Account reactivated - Unique Tutorials','Dear '+s.name+', your Unique Tutorials portal access has been restored. You can sign in again.',true);
+  }).catch(function(e){s.suspended=true;s.suspendedAt=prev.a;s.suspendReason=prev.r;alert('Could not reactivate: '+(e.code||e.message));rStu();});
+}
+
+// ── Backup & restore ─────────────────────────────────────────────────────────
+var BK_CHUNK=700000,BK_KEEP=7;
+async function collectBackup(){
+  var r=await Promise.all([db.collection(DB+'_students').get(),db.collection(DB+'_fees').get(),db.collection(DB+'_marks').get(),db.collection(DB+'_att').get(),db.collection(DB+'_meta').doc('counters').get(),db.collection(DB+'_meta').doc('timetable').get(),db.collection(DB+'_notices').get()]);
+  return {app:'unique-tutorials',version:1,createdAt:Date.now(),by:_who(),
+    students:r[0].docs.map(function(d){return d.data();}),fees:r[1].docs.map(function(d){return d.data();}),marks:r[2].docs.map(function(d){return d.data();}),
+    att:r[3].docs.map(function(d){return {id:d.id,records:d.data().records||[]};}),
+    counters:r[4].exists?r[4].data():null,timetable:r[5].exists?r[5].data():null,notices:r[6].docs.map(function(d){return d.data();})};
+}
+async function saveBackupToCloud(label){
+  var data=await collectBackup(),json=JSON.stringify(data),key=(label||'auto')+'_'+new Date(data.createdAt).toISOString().slice(0,19).replace(/[:T]/g,'-');
+  var n=Math.ceil(json.length/BK_CHUNK),ops=[];
+  for(var i=0;i<n;i++)(function(i){ops.push(function(b){b.set(db.collection(DB+'_backups').doc(key+'__'+i),{key:key,idx:i,total:n,label:label||'auto',createdAt:data.createdAt,by:data.by,counts:{students:data.students.length,fees:data.fees.length,marks:data.marks.length},chunk:json.slice(i*BK_CHUNK,(i+1)*BK_CHUNK)});});})(i);
+  await chunkCommit(ops);
+  await db.collection(DB+'_meta').doc('backupState').set({lastAt:data.createdAt,lastKey:key},{merge:true});
+  pruneBackups();
+  return key;
+}
+async function pruneBackups(){
+  try{var q=await db.collection(DB+'_backups').where('idx','==',0).get();
+    var all=q.docs.map(function(d){return d.data();}).sort(function(a,b){return b.createdAt-a.createdAt;});
+    var drop=all.filter(function(x){return x.label==='auto';}).slice(BK_KEEP).concat(all.filter(function(x){return x.label!=='auto';}).slice(BK_KEEP));
+    for(var i=0;i<drop.length;i++)for(var j=0;j<drop[i].total;j++)await db.collection(DB+'_backups').doc(drop[i].key+'__'+j).delete();
+  }catch(e){console.warn('prune',e);}
+}
+async function autoBackupIfDue(){
+  try{
+    if(!currentTeacher)return;
+    var st=await db.collection(DB+'_meta').doc('backupState').get();
+    var last=st.exists?(st.data().lastAt||0):0;
+    if(Date.now()-last<864e5)return;
+    await saveBackupToCloud('auto');logAudit('backup.auto','Automatic daily backup saved');
+    purgeExpiredTrash();
+  }catch(e){console.warn('Auto backup skipped:',e.code||e.message);}
+}
+async function backupNow(){
+  try{toast('Backing up…');var k=await saveBackupToCloud('manual');logAudit('backup.manual','Manual backup '+k);toast('Backup saved');rBackups();}
+  catch(e){alert('Backup failed: '+(e.code||e.message));}
+}
+async function downloadBackup(){
+  try{var d=await collectBackup(),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d)],{type:'application/json'}));a.download='unique-tutorials-backup-'+todayStr()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);logAudit('backup.download','Backup file downloaded');}
+  catch(e){alert('Could not create backup: '+(e.code||e.message));}
+}
+async function rBackups(){
+  var t=document.getElementById('bkp-tbl');t.innerHTML='<tr><td style="padding:24px;color:#94a3b8">Loading…</td></tr>';
+  try{
+    var q=await db.collection(DB+'_backups').where('idx','==',0).get();
+    var list=q.docs.map(function(d){return d.data();}).sort(function(a,b){return b.createdAt-a.createdAt;});
+    var rows=list.map(function(x){return '<tr><td>'+fmtTs(x.createdAt)+'</td><td><span class="st sbb">'+escH(x.label)+'</span></td><td>'+((x.counts&&x.counts.students)||0)+' students · '+((x.counts&&x.counts.fees)||0)+' fees · '+((x.counts&&x.counts.marks)||0)+' results</td><td>'+escH(x.by||'')+'</td><td><button class="btn btnsm btnp" onclick="restoreFromCloud(\''+x.key+'\','+x.total+')">Restore</button></td></tr>';}).join('');
+    t.innerHTML=thead(['Saved','Type','Contents','By','Action'])+'<tbody>'+(rows||'<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:28px">No backups yet — click "Back up now"</td></tr>')+'</tbody>';
+  }catch(e){t.innerHTML='<tr><td style="padding:24px;color:#ef4444">Could not load backups ('+(e.code||e.message)+'). Publish the updated Firestore rules.</td></tr>';}
+}
+async function restoreFromCloud(key,total){
+  try{var parts=[];for(var i=0;i<total;i++){var d=await db.collection(DB+'_backups').doc(key+'__'+i).get();if(!d.exists)throw {message:'backup part '+i+' missing'};parts.push(d.data().chunk);}
+    await applyRestore(JSON.parse(parts.join('')),key);
+  }catch(e){alert('Restore failed: '+(e.code||e.message));}
+}
+function restoreFromFile(inp){
+  var f=inp.files&&inp.files[0];inp.value='';if(!f)return;
+  var r=new FileReader();r.onload=function(){try{applyRestore(JSON.parse(r.result),f.name);}catch(e){alert('That file is not a valid backup.');}};r.readAsText(f);
+}
+async function applyRestore(d,label){
+  if(!d||d.app!=='unique-tutorials'||!Array.isArray(d.students)||!Array.isArray(d.fees)||!Array.isArray(d.marks)||!Array.isArray(d.att)){alert('This is not a valid Unique Tutorials backup.');return;}
+  var typed=prompt('RESTORE from '+label+'?\n\nBackup taken '+fmtTs(d.createdAt)+' with '+d.students.length+' students, '+d.fees.length+' fees, '+d.marks.length+' results.\nCurrent students, fees, marks, attendance and timetable will be REPLACED. A safety backup of the current data is saved first.\n\nType RESTORE to continue:');
+  if(typed!=='RESTORE'){if(typed!==null)alert('Restore cancelled.');return;}
+  try{
+    toast('Saving safety backup…');await saveBackupToCloud('pre-restore');
+    var cur=await Promise.all([db.collection(DB+'_students').get(),db.collection(DB+'_fees').get(),db.collection(DB+'_marks').get(),db.collection(DB+'_att').get()]);
+    var names=['_students','_fees','_marks','_att'],ops=[];
+    cur.forEach(function(q,i){q.docs.forEach(function(doc){ops.push(function(b){b.delete(db.collection(DB+names[i]).doc(doc.id));});});});
+    await chunkCommit(ops);ops=[];
+    d.students.forEach(function(x){ops.push(function(b){b.set(db.collection(DB+'_students').doc(String(x.id)),x);});});
+    d.fees.forEach(function(x){ops.push(function(b){b.set(db.collection(DB+'_fees').doc(String(x.id)),x);});});
+    d.marks.forEach(function(x){ops.push(function(b){b.set(db.collection(DB+'_marks').doc(String(x.id)),x);});});
+    d.att.forEach(function(x){ops.push(function(b){b.set(db.collection(DB+'_att').doc(x.id),{records:x.records});});});
+    if(d.counters)ops.push(function(b){b.set(db.collection(DB+'_meta').doc('counters'),d.counters);});
+    if(d.timetable)ops.push(function(b){b.set(db.collection(DB+'_meta').doc('timetable'),d.timetable);});
+    await chunkCommit(ops);
+    logAudit('backup.restore','Restored from '+label+' (backup of '+fmtTs(d.createdAt)+')');
+    alert('Restore complete. The page will reload.');location.reload();
+  }catch(e){alert('Restore failed part-way: '+(e.code||e.message)+'\nA safety backup was saved - use it under Backup & Restore to recover.');}
+}
+
+// ── Email / SMS notifications ────────────────────────────────────────────────
+function loadNotifyCfg(){
+  db.collection(DB+'_meta').doc('notify').get().then(function(d){if(d.exists)_notifyCfg=Object.assign(_notifyCfg,d.data());}).catch(function(){});
+}
+function rNotifySettings(){
+  document.getElementById('ntf-url').value=_notifyCfg.url||'';
+  document.getElementById('ntf-auto').checked=!!_notifyCfg.auto;
+  document.getElementById('ntf-email').checked=_notifyCfg.email!==false;
+  document.getElementById('ntf-sms').checked=_notifyCfg.sms!==false;
+}
+function saveNotifyCfg(){
+  var u=document.getElementById('ntf-url').value.trim();
+  if(u&&!/^https:\/\/[^\s]+$/.test(u)){alert('Webhook URL must start with https://');return;}
+  _notifyCfg={url:u,auto:document.getElementById('ntf-auto').checked,email:document.getElementById('ntf-email').checked,sms:document.getElementById('ntf-sms').checked};
+  db.collection(DB+'_meta').doc('notify').set(_notifyCfg).then(function(){logAudit('notify.settings','Notification settings updated');toast('Settings saved');}).catch(function(e){alert('Could not save: '+(e.code||e.message));});
+}
+function _postHook(p){
+  return fetch(_notifyCfg.url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(p)});
+}
+async function notifyStudents(list,subject,message,auto){
+  if(!_notifyCfg.url){
+    if(auto)return;
+    var h='<p style="color:#64748b;margin-bottom:10px">No webhook is set up, so open each message yourself (set one up under Email / SMS Setup for automatic sending).</p>';
+    list.forEach(function(s){
+      var m=encodeURIComponent(message);
+      h+='<div style="display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid #f1f5f9"><span><b>'+escH(s.name)+'</b></span><span>'+
+        (s.email?'<a class="btn btnsm" href="mailto:'+encodeURIComponent(s.email)+'?subject='+encodeURIComponent(subject)+'&body='+m+'">Email</a> ':'')+
+        (s.phone?'<a class="btn btnsm" href="sms:'+s.phone+'?&body='+m+'">SMS</a>':'')+'</span></div>';
+    });
+    document.getElementById('rmm-t').textContent=subject;document.getElementById('rmm-b').innerHTML=h;document.getElementById('rmm').classList.add('open');return;
+  }
+  if(auto&&!_notifyCfg.auto)return;
+  var sent=0;
+  for(var i=0;i<list.length;i++){var s=list[i];
+    try{
+      if(_notifyCfg.email&&s.email){await _postHook({channel:'email',to:s.email,name:s.name,subject:subject,message:message});sent++;}
+      if(_notifyCfg.sms&&s.phone){await _postHook({channel:'sms',to:'+91'+s.phone,name:s.name,subject:subject,message:message});sent++;}
+    }catch(e){console.warn('notify',e);}
+  }
+  logAudit('notify.sent',subject+' → '+list.length+' student(s), '+sent+' message(s) sent');
+  if(!auto)toast(sent+' message(s) sent');
+}
+function testNotify(){
+  if(!_notifyCfg.url){alert('Save a webhook URL first.');return;}
+  var me={name:_who(),email:currentTeacher&&currentTeacher.email,phone:''};
+  _notifyCfg.email=true;notifyStudents([me],'Test - Unique Tutorials','This is a test notification from Unique Tutorials.',false);
+}
+function remindDues(){
+  var pend={};fees.forEach(function(f){if(f.status==='Due'||f.status==='Overdue'){(pend[f.stuId]=pend[f.stuId]||[]).push(f);}});
+  var ids=Object.keys(pend).map(Number),list=students.filter(function(s){return ids.indexOf(s.id)!==-1&&!s.suspended;});
+  if(!list.length){alert('No students have pending fees.');return;}
+  if(!confirm('Send a fee reminder to '+list.length+' student(s) with pending fees?'))return;
+  if(!_notifyCfg.url){
+    var h='<p style="color:#64748b;margin-bottom:10px">Open each reminder:</p>';
+    list.forEach(function(s){var tot=pend[s.id].reduce(function(a,f){return a+(f.customFee||f.amount);},0),msg='Dear '+s.name+', fee of Rs.'+tot+' is pending at Unique Tutorials ('+pend[s.id].map(function(f){return f.month;}).join(', ')+'). Please pay at the earliest. Thank you.',m=encodeURIComponent(msg);
+      h+='<div style="display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid #f1f5f9"><span><b>'+escH(s.name)+'</b> · Rs.'+tot+'</span><span>'+(s.email?'<a class="btn btnsm" href="mailto:'+encodeURIComponent(s.email)+'?subject='+encodeURIComponent('Fee reminder - Unique Tutorials')+'&body='+m+'">Email</a> ':'')+(s.phone?'<a class="btn btnsm" href="sms:'+s.phone+'?&body='+m+'">SMS</a>':'')+'</span></div>';});
+    document.getElementById('rmm-t').textContent='Fee reminders';document.getElementById('rmm-b').innerHTML=h;document.getElementById('rmm').classList.add('open');return;
+  }
+  (async function(){for(var i=0;i<list.length;i++){var s=list[i],tot=pend[s.id].reduce(function(a,f){return a+(f.customFee||f.amount);},0);
+    await notifyStudents([s],'Fee reminder - Unique Tutorials','Dear '+s.name+', fee of Rs.'+tot+' is pending at Unique Tutorials ('+pend[s.id].map(function(f){return f.month;}).join(', ')+'). Please pay at the earliest. Thank you.',false);}
+    logAudit('notify.reminders','Fee reminders sent to '+list.length+' student(s)');})();
 }
 </script>
 </body>
